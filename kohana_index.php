@@ -74,7 +74,7 @@ define('SYSPATH', realpath($system) . DIRECTORY_SEPARATOR);
 
 // Contains framework and site applications. (not the plugin root)
 if (!defined('KOHANA_ROOT')) {
-	define('KOHANA_ROOT', ABSPATH . 'wp-content/kohana/');
+	define('KOHANA_ROOT', Kwp::slash(WP_CONTENT_DIR) . 'kohana/');
 }
 
 // Clean up the configuration vars

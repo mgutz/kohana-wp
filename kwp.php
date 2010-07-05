@@ -1,12 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mgutz
- * Date: Jul 4, 2010
- * Time: 1:47:31 PM
- * To change this template use File | Settings | File Templates.
- */
- 
+
+// Meta key for route.
+define('KWP_ROUTE', '_kwp_route');
+
+// Meta key for output placement.
+define('KWP_PLACEMENT', '_kwp_placement');
+
+// Translation domain
+define('KWP_DOMAIN', 'kwp_domain');
+
 class KWP {
 	/**
 	 * Ensures a string ends with a forward slash.
@@ -23,4 +25,5 @@ class KWP {
 			return $str;
 		}
 	}
+	
 }

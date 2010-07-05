@@ -1,4 +1,8 @@
 <?php 
+if (!current_user_can('manage_options'))  {
+  wp_die( __('You do not have sufficient permissions to access this page.') );
+}
+
 
 /**
  * Check to see if the kohana path has been added as a WordPress Option.
@@ -16,7 +20,7 @@ if( $show_routing_tab ){
 		$pid = $_POST['postid'];
 		$placement = ($_POST['placement']) ? $_POST['placement'] : 'after';
 		
-		$option_name = "kohana_route::$pid";
+		$option_name = "kwp_route::$pid";
 		$option_value = "$kr::$placement";
 		
 		if( get_option($option_name) ){
@@ -30,25 +34,47 @@ if( $show_routing_tab ){
 /**
  * Handle Deleting Routing Option
  */
-if( $_POST['action'] == 'delete_page_routing' ){
+if (isset($_POST['action']) && $_POST['action'] == 'delete_page_routing') {
 	$show_routing_tab = true;
-	delete_option( $_POST['route'] );
+	delete_route($_POST['route_post_id'] );
 	$routes_updated = true;
+}
+
+$option_set = (get_option('kwp_system_path')) ? true : false;
+
+function delete_route($post_id) {
+	$sql = <<<SQL
+		DELETE
+		FROM wp_postmeta
+		WHERE 
+			( meta_key = '_kwp_route'
+			  OR meta_key = '_kwp_placement'
+			)
+			AND post_id = $post_id;
+SQL;
+	global $wpdb;
+	$wpdb->query($sql);
 }
 
 /**
  * Check wordpress options and find all kohana routes
  */
-$all_options = get_alloptions();
-$routes = array();
-foreach( $all_options as $op_name=>$op_value ){
-	if( substr($op_name,0,12)=='kohana_route' ){
-		$routes[] = explode( '::', $op_name.'::'.$op_value );
-	}
-}
 
-$option_set = get_option('kwp_system_path') ? true : false ;
-$has_routes = ($routes) ? true : false;
+function get_page_routes() {
+	$sql = <<<SQL
+		SELECT
+			pm.post_id,
+			pm.meta_value as route,
+			wp_posts.post_title
+		FROM
+			wp_postmeta pm
+		INNER JOIN wp_posts ON pm.post_id = wp_posts.ID
+		WHERE
+			pm.meta_key = '_kwp_route'
+SQL;
+	global $wpdb;
+	return $wpdb->get_results($sql);
+}
 
 
 /**
@@ -235,106 +261,54 @@ Kohana root: <b>wp-content/kohana</b>
 </div>
 <div id="kohana_routing_tab" style="display:<?php print ( $show_routing_tab ) ? '' : 'none' ?>">
 
-<?php if( $option_set && $has_routes ) : ?>
-<h3>Kohana Page Routing</h3>
+<?
+$routes = get_page_routes();
+if ($routes) {
+?>
+	<h3>Kohana Page Routing</h3>
 
-<?php if( $routes_updated ) : ?>
-<div style="background-color: rgb(255, 251, 204);" id="message" class="updated fade"><p><strong>Page Routes Updated.</strong></p></div>
-<?php endif; ?>
+<? } ?>
 
 <table class="widefat tag fixed" cellspacing="0">
 	<thead>
 	<tr>
 	<th scope="col" id="name" class="manage-column column-description" style="">Kohana Content</th>
 	<th scope="col" id="slug" class="manage-column column-description" style="">Wordpress Page</th>
-	<th scope="col" id="slug" class="manage-column column-slug" style="">Placement</th>
 	<th scope="col" id="posts" class="manage-column column-posts num" style=""></th>
 	</tr>
 	</thead>
 <tbody id="the-list" class="list:tag">
-<?php foreach( $routes as $route ) : ?>
-<tr id="cat-1" class="iedit alternate">
- 	 <td class="description column-description"><?php echo $route[2] ?></td>
- 	 <td class="description column-description"><?php echo $route[1] ?></td>
- <td class="name column-description"><?php echo $route[3] ?><br></td>
- 	 <td class="slug column-slug"><a href="javascript:delete_route('<?php echo 'kohana_route::'.$route[1] ?>')">delete</a></td>
-</tr>
-<?php endforeach; ?>
+<? foreach($routes as $route) { ?>
+	<tr id="cat-1" class="iedit alternate">
+	 	 <td class="description column-description"><?= $route->route ?></td>
+	 	 <td class="description column-description"><?= $route->post_title ?></td>
+	 	 <td class="slug column-slug"><?= edit_post_link('edit', '', '', $route->post_id); ?> | <a href="javascript:delete_route(<?= $route->post_id ?>)">delete</a></td>
+	</tr>
+<? } ?>
 </tbody>
 
 </table>
 <br class="clear">
 <script type="text/javascript">
-function delete_route(route){
-	document.getElementById('route').value = route;
+function delete_route(post_id) {
+	document.getElementById('route_post_id').value = post_id;
 	document.getElementById('delete_route_form').submit();
 }
 </script>
 <form id="delete_route_form" action="options-general.php?page=Kohana" method="post">
 	<input name="action" id="action" value="delete_page_routing" type="hidden">
-	<input name="route" id="route" value="" type="hidden">
+	<input name="route_post_id" id="route_post_id" value="" type="hidden">
  
 </form>
-<?php endif; // END IF OPTION_SET AND HAS_ROUTES ?>
+
 
 <?php if( $option_set ) : ?>
 <div class="form-wrap">
-<h3>Create a New Page Map</h3>
-<div id="ajax-response"></div>
-
-<p>Create a page map if you want to include the results from a Kohana controller inside an exsisting wordpress page.</p>
-
-<form name="addmap" id="addmap" method="post" action="options-general.php?page=Kohana" class="add:the-list: validate">
-<input name="action" value="add_page_routing" type="hidden">
-
-<div class="form-field form-required">
-	<label for="name">Kohana Controller (application/controller/method)</label>
-	<input name="kr" id="kr" value="" size="40" aria-required="true" type="text">
-    <p>E.g. To execute the action <strong>index</strong> from the controller <strong>wp-content/kohana/sites/all/pizza_app/classes/controller/order.php</strong>, enter <strong>pizza_app/order/index</strong> above.</p>
-</div>
-
-
-<div class="form-field">
-	<label for="slug">Wordpress Page</label>
-
-	<select name="postid"> 
-	 <option value=""><?php echo attribute_escape(__('Select page')); ?></option> 
-	 <?php 
-	  $pages = get_pages(); 
-	  foreach ($pages as $pagg) {
-	  	if( $pagg->ID == get_option('kwp_front_loader') ) continue;
-	    $option = '<option value="'.$pagg->ID.'" ';
-	    $option .= '>';
-	    $option .= $pagg->post_title;
-	    $option .= '</option>';
-	    echo $option;
-	  }
-	 ?>
-	</select>
-	
-    <p>Select the WordPress page in which the Kohana controller will be included</p>
-</div>
-
-<div class="form-field">
-	<label for="slug">Placement</label>
-
-	<select name="placement"> 
-	 <option value=""><?php echo attribute_escape(__('Select placement')); ?></option>
-	 <option value="before">Before Page Content</option> 
-	 <option value="after">After Page Content</option> 
-	 <option value="replace">Replace Page Content</option> 
-	</select>
-	
-    <p>Select the location where the Kohana controller should be included</p>
-</div>
-
-
-<p class="submit"><input class="button" name="submit" value="Add Page Mapping" type="submit"></p>
-</form></div>
-
+	<p>Route entries are added by editing a Page through the Pages menu on the left hand side. Look for <b>Kohana-WP Integration</b> box.</p>
 </div>
 
 <?php endif; // END IF OPTIONS_SET ?>
 
+</div>
 </div>
 </div>
