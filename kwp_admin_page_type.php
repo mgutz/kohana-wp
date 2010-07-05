@@ -42,6 +42,10 @@ function kwp_page_save_postdata($post_id) {
 	// verify this came from the our screen and with proper authorization,
 	// because save_post can be triggered at other times
 
+	if (empty($_POST['kwp']['noncename'])) {
+		return $post_id;
+	}
+
 	if (!wp_verify_nonce($_POST['kwp']['noncename'], plugin_basename(__FILE__))) {
 	  	return $post_id;
 	}
@@ -59,8 +63,16 @@ function kwp_page_save_postdata($post_id) {
 	}
 
 	// Add hidden metadata (underscore)
-	add_update_post_meta($post_id, KWP_ROUTE, $_POST['kwp']['route']);
-	add_update_post_meta($post_id, KWP_PLACEMENT, $_POST['kwp']['placement']);
+	if (empty($_POST['kwp']['route'])) {
+		delete_post_meta($post_id, KWP_ROUTE);
+		delete_post_meta($post_id, KWP_ROUTE);
+	}
+	else {
+		add_update_post_meta($post_id, KWP_ROUTE, $_POST['kwp']['route']);
+		add_update_post_meta($post_id, KWP_PLACEMENT, $_POST['kwp']['placement']);
+	}
+
+
 	
 	return true;
 }

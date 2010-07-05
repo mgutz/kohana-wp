@@ -62,6 +62,8 @@ $k_mods = explode(',', get_option('kwp_modules') );
 foreach( $k_mods as $km ) {
 	$mods[trim($km)] = MODPATH.trim($km);
 }
+// add KWP module
+$mods['kwp'] = WP_PLUGIN_DIR . '/kohana-wp/modules/kwp';
 Kohana::modules($mods);
 
 /**
