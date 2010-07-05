@@ -1,8 +1,6 @@
 Options +FollowSymlinks
 RewriteEngine on
 
-RewriteCond %{HTTP_REFERER} .*
-
 ## Handles static assets in public folder of a kohana app
 # must have 'kr' variable
 RewriteCond %{QUERY_STRING} kr=([^/]+)/public/(.*)$
