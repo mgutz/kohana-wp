@@ -145,7 +145,7 @@ function wp_kohana_admin_showrouting()
 
 <div class="wrap nosubsub">
 	<div id="icon-edit-pages" class="icon32"><br></div>
-<h2>Kohana Control Panel</h2>
+<h2>Kohana-WP Control Panel</h2>
  <p>The Kohana for Wordpress Module allows you to add pages and applications built with the Kohana PHP framework to your
  Wordpress site. To learn more about Kohana see <a href="http://kohanaphp.com/">http://kohanaphp.com</a></p>
 

@@ -190,7 +190,7 @@ function kohana_deactivate() {
  * @return
  */
 function kohana_register_admin_menu() {
-	add_options_page("Kohana", "Kohana", 'manage_options', "Kohana", "kohana_admin_menu");
+	add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "Kohana", "kohana_admin_menu");
 }
 
 /**
