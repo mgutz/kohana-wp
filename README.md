@@ -1,12 +1,13 @@
 # Kohana-WP
 
-WordPress 3+ plugin to execute Kohana MVC framework routes and insert/replace
-content within a WordPress page, post, widget ...
+WordPress 3+ plugin to execute Kohana MVC framework route and insert/replace
+the resulting output into a WordPress page, post or widget.
 
-[Kohana-WP Home](http://kohana-wp.mgutz.com)
+[Kohana-WP Home](http://kohana-wp.mgutz.com) - Not yet live.
 
-Licensed under the same license as WordPress [GPL2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
-
+Licensed under [GPL2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html) to meet the
+requirement for a WordPress plugin. Frankly, if you need it to use it for commercial purposes just ask. 
+I hope if you find benefit in using the plugin, you consider contributing back to the community.
 
 ## Description
 
@@ -18,7 +19,7 @@ experienced in HTML, Javascript and PHP.
 
 ### Install through Plugins in WordPress Admin
 
-This is a not yet released plugin. Please follow instructions in next section for now.
+Plugin is not yet released. Please follow instructions in next section for now.
 
 ### Develop Using Edge Version
 
@@ -47,8 +48,9 @@ This is a not yet released plugin. Please follow instructions in next section fo
                         app2/
                     default/
             plugins/
-                kohana-wp                 #=> the new plugin
-
+                kohana-wp/                #=> the plugin itself
+                    modules/              #=> utility classes, Controller_KWP, Helper_KWP ...
+                
 ## RoadMap
 
 Aug 2010 - Version 0.1 concentrate on supporting multiple applications and admin changes. Work in progress.
