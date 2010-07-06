@@ -55,16 +55,49 @@ if( ! $kohana_base_url ) {
 }
 Kohana::init(array('charset' => 'utf-8', 'base_url' => $kohana_base_url ));
 
-/**		**** Enable modules as defined in plugin settings
- * Enable modules. Modules are referenced by a relative or absolute path.
+
+/**
+ * Register Kohana modules. Application modules have higher
+ * precedence than global modules. KWP may also be overriden.
+ *
+ * Any module found beneath an application folder are registered.
+ * 
+ * Application modules installed: WORDPRESS_ROOT/wp-content/kohana/sites/all/<application>/modules
+ * Global modules instaled: WORDPRESS_ROOT/wp-content/kohana/modules
+ * 
+ * TODO: Sholdn't the framework be isolated as well?
  */
-$k_mods = explode(',', get_option('kwp_modules') );
-foreach( $k_mods as $km ) {
-	$mods[trim($km)] = MODPATH.trim($km);
+function kwp_register_modules() {
+	// Add KWP module
+	$mods['kwp'] = WP_PLUGIN_DIR . '/kohana-wp/modules/kwp';
+
+	// Add global modules if not defined the application
+	$k_mods = explode(',', get_option('kwp_modules') );
+	foreach ($k_mods as $km) {
+		$mods[trim($km)] = MODPATH.trim($km);
+	}
+
+	// Add application modules
+	$mods_dir = APPPATH . 'modules';
+	if (is_dir($mods_dir)) {
+		if ($handle = opendir($mods_dir)) {
+			while (false !== ($file = readdir($handle))) {
+				if ($file == "." || $file == "..")
+					continue;
+
+				$path = "$mods_dir/$file";
+				if (is_dir($path)) {
+					$mods[$file] = $path;
+				}
+			}
+			closedir($handle);
+		}
+	}
+	Kohana::modules($mods);
 }
-// add KWP module
-$mods['kwp'] = WP_PLUGIN_DIR . '/kohana-wp/modules/kwp';
-Kohana::modules($mods);
+
+kwp_register_modules();
+
 
 /**
 * Attach the file write to logging. Multiple writers are supported.

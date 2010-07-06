@@ -1,6 +1,6 @@
 # Kohana-WP
 
-WordPress 3+ plugin to execute Kohana MVC framework route and insert/replace
+WordPress 3+ plugin to execute a Kohana MVC framework route and insert/replace
 the resulting output into a WordPress page, post or widget.
 
 [Kohana-WP Home](http://kohana-wp.mgutz.com) - Not yet live.
@@ -30,14 +30,14 @@ Plugin is not yet released. Please follow instructions in next section for now.
         cd ..
         git clone git://github.com/mgutz/kohana-wp-examples.git kohana
 
-2. Copy `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
+2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
 ## Directory Structure
 
     WORDPRESS_SITE/
         wp-content/
             kohana/
-                framework/                #=> different Kohana versions (selecteable in future admin)
+                framework/                #=> different Kohana versions (selectable in future admin)
                     kohana-3.0.6.2/
                         system/
                         modules/          #=> not sure if this belongs here, version agnostic?
