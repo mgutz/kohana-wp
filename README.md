@@ -24,7 +24,6 @@ Plugin is not yet released. Please follow instructions in next section for now.
 ### Develop Using Edge Version
 
 1. Install plugin and examples
-
     cd WORDPRESS_SITE/wp-content/plugins
     git clone git://github.com/mgutz/kohana-wp.git
     cd ..
