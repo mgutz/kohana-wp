@@ -28,9 +28,9 @@ Plugin is not yet released. Please follow instructions in next section for now.
         cd WORDPRESS_SITE/wp-content/plugins
         git clone git://github.com/mgutz/kohana-wp.git
         cd ..
-        git clone git://github.com/mgutz/kohana-wp-examples.git
+        git clone git://github.com/mgutz/kohana-wp-examples.git kohana
 
-2. Copy `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS\_SITE/.htaccess`
+2. Copy `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
 ## Directory Structure
 
