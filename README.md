@@ -34,14 +34,13 @@ Plugin is not yet released. Please follow instructions in next section for now.
 
 ## Directory Structure
 
-    WPROOT
+    WORDPRESS_SITE/
         wp-content/
             kohana/
                 framework/                #=> different Kohana versions (selecteable in future admin)
                     kohana-3.0.6.2/
                         system/
                         modules/          #=> not sure if this belongs here, version agnostic?
-                    kohana-3.1.0-dev/
                 sites/                    
                     all/                  #=> available applications to all sites (preparing for MU use)
                         app1/
