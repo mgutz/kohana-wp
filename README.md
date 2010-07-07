@@ -38,12 +38,16 @@ Plugin is not yet released. Please follow instructions in next section for now.
         wp-content/
             kohana/
                 framework/                #=> different Kohana versions (selectable in future admin)
-                    kohana-3.0.6.2/
+                    current/
                         system/
-                        modules/          #=> not sure if this belongs here, version agnostic?
+                    kohana-3.0.6.2/
+                modules/
                 sites/                    
                     all/                  #=> available applications to all sites (preparing for MU use)
                         app1/
+                            classes/
+                            ...
+                            modules/      #=> apps can override modules
                         app2/
                     default/
             plugins/
