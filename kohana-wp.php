@@ -8,8 +8,6 @@
 #     Author URI: http://www.mgutz.com
 #     */   
 
-ini_set('error_log', '/var/log/php-error.log');
-
 /**
  * Register Actions
  */
@@ -39,6 +37,11 @@ add_filter('single_post_title', 'kohana_title_filter');
 add_filter('get_pages', 'kohana_page_filter');
 add_filter('plugin_row_meta', 'set_plugin_meta', 10, 2);
 add_filter('page_template', 'kohana_page_template_filter');
+
+// Contains framework and site applications. (not the plugin root)
+if (!defined('KOHANA_ROOT')) {
+	define('KOHANA_ROOT', WP_CONTENT_DIR . '/kohana/');
+}
 
 require_once 'kwp.php';
 
@@ -232,6 +235,9 @@ function should_kohana_run() {
 
 	if ($is_ok)
 		return true;
+	// no need to check
+	$is_ok = true;
+	return true;
 
 	// If options are not set then return false
 	if (!get_option('kwp_system_path')) {
@@ -626,11 +632,11 @@ function kohana_request($kr) {
 function execute_request($kr) {
 	// [0] = application namespace
 	// [1] = controller/action/arg0/.../argn
-	$parts = explode('/', $kr, 2);
-	$app_path = KOHANA_ROOT . 'sites/all/' . $parts[0] . '/';
+	list($app, $controller_rest) = explode('/', $kr, 2);
+	$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
 
 	bootstrap($app_path);
-	$result = Request::factory($parts[1])->execute();
+	$result = Request::factory($controller_rest)->execute();
 	return $result;
 }
 

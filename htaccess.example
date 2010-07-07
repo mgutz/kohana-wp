@@ -5,8 +5,4 @@ RewriteEngine on
 # must have 'kr' variable
 RewriteCond %{QUERY_STRING} kr=([^/]+)/public/(.*)$
 # rewrite it to wp-content, the ? at end strips the querystring so rewrite is not recursive on internal redirect
-RewriteRule ^.*$ /wp-content/kohana/sites/all/%1/public/%2? [L]
-
-# BEGIN WordPress
-
-# END WordPress
+RewriteRule ^.*$ wp-content/kohana/sites/all/%1/public/%2? [L]
