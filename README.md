@@ -38,16 +38,18 @@ Good idea to start with a new database when I change the admin. Settings in DB c
 
 ### Plugin LifeCycle
 
-if plugin is activated
-    WordPress loads `kohana-wp.php` on any page
-    define kwp constants
-    if page is in admin area
-        register plugin hooks
-        load `classes/kwp/admin/hooker.php`
-        `$hooker->register_hooks()`
-    else
-        load `classes/kwp/non_admin/hooker.php`
-        `$hooker->register_hooks()`
+    if plugin is activated
+        WordPress loads `kohana-wp.php` on any page
+        define KWP constants
+        if page is in admin area
+            register plugin hooks
+            load classes/kwp/admin/hooker.php
+            register admin hooks
+         
+        // hook into any desirable event where it makes sense to inject content from executing a Kohana route
+        else
+            load `classes/kwp/non_admin/hooker.php`
+            register non-admin hooks
 
 ### Kohana Execution
     TBD
