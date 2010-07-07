@@ -10,7 +10,7 @@
 $modules = get_option('kwp_module_path');
 if (!is_dir($modules)) {
 	$modules = KOHANA_ROOT . "framework/modules/";
-	error_log("kwp_module_path option is invalid: $modules");
+	error_log("kwp_module_path option is an invalid directory: $modules");
 }
 
 /**
@@ -22,7 +22,7 @@ if (!is_dir($modules)) {
 $system = get_option('kwp_system_path');
 if (!is_dir($system)) {
 	$system = KOHANA_ROOT . "framework/current/system/";
-	error_log("kwp_system_path option is invalid: $system");
+	error_log("kwp_system_path option is an invalid directory: $system");
 }
 
 /**

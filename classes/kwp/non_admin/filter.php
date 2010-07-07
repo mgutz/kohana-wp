@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
  
-class KWP_Filter {
+class KWP_NonAdmin_Filter {
 
 	/**
 	 * Function provides a filter on the wordpress list of pages typically used to build
@@ -213,21 +213,6 @@ class KWP_Filter {
 		return $template;
 	}
 
-	/**
-	 * Add settings link to plugin admin page
-	 */
-	static function plugin_row_meta($links, $file) {
-		$plugin = plugin_basename(__FILE__);
-		// create link
-		if ($file == $plugin) {
-			return array_merge(
-				$links,
-				array(sprintf('<a href="options-general.php?page=%s">%s</a>',
-					'Kohana', __('Settings')))
-			);
-		}
-		return $links;
-	}
 
 
 }

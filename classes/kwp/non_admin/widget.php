@@ -2,7 +2,7 @@
 /**
  * KohanaWidget Class
  */
-class KohanaWidget extends WP_Widget {
+class KWP_NonAdmin_Widget extends WP_Widget {
     /** constructor */
     function KohanaWidget() {
         parent::WP_Widget(false, $name = 'KohanaWidget');	

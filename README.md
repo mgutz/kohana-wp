@@ -23,6 +23,8 @@ Plugin is not yet released. Please follow instructions in next section for now.
 
 ### Develop Using Edge Version
 
+Good idea to start with a new database when I change the admin. Settings in DB could be in an invalid state.
+
 1. Install plugin and examples
 
         cd WORDPRESS_SITE/wp-content/plugins
@@ -32,15 +34,23 @@ Plugin is not yet released. Please follow instructions in next section for now.
 
 2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
-## Load Sequence
+## Plugin Load Sequence
+
+### Plugin LifeCycle
 
 if plugin is activated
-    kohana-wp.php
-    kohana_index.php
-    kohana_bootstrap.php
+    WordPress loads `kohana-wp.php` on any page
+    define kwp constants
+    if page is in admin area
+        register plugin hooks
+        load `classes/kwp/admin/hooker.php`
+        `$hooker->register_hooks()`
+    else
+        load `classes/kwp/non_admin/hooker.php`
+        `$hooker->register_hooks()`
 
-
-
+### Kohana Execution
+    TBD
 
 ## Directory Structure
 
