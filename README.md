@@ -34,10 +34,10 @@ Plugin is not yet released. Please follow instructions in next section for now.
 
 ## Load Sequence
 
-kohana-wp.php
-kwp.php
-kohana_index.php
-kohana_bootstrap.php
+if plugin is activated
+    kohana-wp.php
+    kohana_index.php
+    kohana_bootstrap.php
 
 
 

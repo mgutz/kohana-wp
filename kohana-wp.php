@@ -12,16 +12,19 @@
  * Encapsulate Kohana-WP in a class to avoid any conflicts.
  */
 class KWP_Plugin {
-	/**
-	 * Registers the plugin and sets a flag indicating plugin's activated state.
-	 * @return void
-	 */
+
 	function __construct() {
 		register_deactivation_hook('kohana-wp/kohana-wp.php', array($this, 'deactivate'));
 		register_activation_hook('kohana-wp/kohana-wp.php', array($this, 'activate'));
 	}
-
+	
+	/**
+	 * Registers administration hooks.
+	 * 
+	 * @return void
+	 */
 	function register_admin_hooks() {
+
 		add_action('admin_menu', 'kohana_register_admin_menu');
 		add_action('admin_menu', 'kwp_page_add_box');
 		add_filter('plugin_row_meta', 'KWP_Filter::plugin_row_meta', 10, 2);
@@ -71,6 +74,17 @@ class KWP_Plugin {
 		define('KWP_DOMAIN', 'kwp_domain');
 	}
 
+	
+	function add_update_option($key, $value) {
+		add_option($key, $value) or update_option($key, $value);
+	}
+
+	function add_new_option($key, $value) {
+		if (!(get_option($key) !== false)) {
+			add_option($key, $value);
+		}
+	}
+
 	/**
 	 * Function is called when plugin is activated by wordpress
 	 *
@@ -91,21 +105,21 @@ class KWP_Plugin {
 		// Insert the post into the database
 		$kohana_front_loader = wp_insert_post($my_post);
 
-		add_option('kwp_front_loader', $kohana_front_loader);
-		add_option('kwp_default_placement', 'replace');
-		add_option('kwp_process_all_uri', 1);
-		add_option('kwp_system_path', WP_CONTENT_DIR . '/kohana/framework/current/system/');
-		add_option('kwp_module_path', WP_CONTENT_DIR . '/kohana/modules/');
-		add_option('kwp_application_path', WP_CONTENT_DIR . '/kohana/sites/all/');
-		add_option('kwp_bootstrap_path', '');
-		add_option('kwp_ext', '.php');
-		add_option('kwp_modules', '');
-		add_option('kwp_default_controller', 'welcome');
-		add_option('kwp_default_action', 'index');
-		add_option('kwp_default_id', '');
-		add_option('kwp_front_loader_in_nav', 0);
-		add_option('kwp_page_template', '');
-		add_option('kwp_activated', '1');
+		$this->add_update_option('kwp_activated', '1');
+		$this->add_new_option('kwp_front_loader', $kohana_front_loader);
+		$this->add_new_option('kwp_default_placement', 'replace');
+		$this->add_new_option('kwp_process_all_uri', 1);
+		$this->add_new_option('kwp_system_path', WP_CONTENT_DIR . '/kohana/framework/current/system/');
+		$this->add_new_option('kwp_module_path', WP_CONTENT_DIR . '/kohana/modules/');
+		$this->add_new_option('kwp_application_path', WP_CONTENT_DIR . '/kohana/sites/all/');
+		$this->add_new_option('kwp_bootstrap_path', '');
+		$this->add_new_option('kwp_ext', '.php');
+		$this->add_new_option('kwp_modules', '');
+		$this->add_new_option('kwp_default_controller', 'welcome');
+		$this->add_new_option('kwp_default_action', 'index');
+		$this->add_new_option('kwp_default_id', '');
+		$this->add_new_option('kwp_front_loader_in_nav', 0);
+		$this->add_new_option('kwp_page_template', '');
 	}
 
 	/**
@@ -120,6 +134,8 @@ class KWP_Plugin {
 
 		update_option('kwp_activated', '0');
 		wp_delete_post(get_option('kwp_front_loader'));
+		
+		return;
 
 		// TODO: if someone accidentally deactivates the plugin, all routes and plugin info is lost!
 		//		 A better idea is to ask the user if found settings should be used when the plugin is re-activated.
@@ -140,14 +156,14 @@ class KWP_Plugin {
 	}
 
 	/**
-	 * The main function.
+	 * The main function. This file is never loaded by WordPress if the plugin is not activated.
 	 *
 	 * @return void
 	 */
 	function main() {
-		$is_activated = (get_option('kwp_activated'));
-		if ($is_activated) 
-			return;
+		//$is_deactivated = !(get_option('kwp_activated'));
+		//if ($is_deactivated)
+		//	return;
 		
 		$this->define_constants_and_vars();
 
@@ -179,7 +195,9 @@ require_once 'classes/kwp/filter.php';
 KWP_Plugin::run();
 
 
-/* Adds a custom section to the "advanced" Post and Page edit screens */
+/**
+ * Adds a custom section Page edit screens titled "Kohana-WP Integration".
+ */
 function kwp_page_add_box() {
 	include_once 'kwp_admin_page_type.php';
 }
