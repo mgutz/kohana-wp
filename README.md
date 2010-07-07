@@ -1,7 +1,7 @@
 # Kohana-WP
 
-WordPress 3+ plugin to execute a Kohana MVC framework route and insert/replace
-the resulting output into a WordPress page, post or widget.
+WordPress 3+ plugin to execute a Kohana MVC framework route and inject
+the output result into a WordPress page, post or widget.
 
 [Kohana-WP Home](http://kohana-wp.mgutz.com) - Not yet live.
 
@@ -36,20 +36,7 @@ Good idea to start with a new database when I change the admin. Settings in DB c
 
 ## Plugin Load Sequence
 
-### Plugin LifeCycle
-
-    if plugin is activated
-        WordPress loads `kohana-wp.php` on any page
-        define KWP constants
-        if page is in admin area
-            register plugin hooks
-            load classes/kwp/admin/hooker.php
-            register admin hooks
-         
-        // hook into any desirable event where it makes sense to inject content from executing a Kohana route
-        else
-            load `classes/kwp/non_admin/hooker.php`
-            register non-admin hooks
+See `KWP_Plugin#main` method in `plugins/kohana-wp/kohana-wp.php`
 
 ### Kohana Execution
     TBD

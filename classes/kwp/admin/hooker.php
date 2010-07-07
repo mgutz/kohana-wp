@@ -9,8 +9,9 @@
 
 class KWP_Admin_Hooker {
 	function register_hooks() {
-		add_action('admin_menu', 'KWP_Admin_Hooker::load_admin_items');
+		add_action('admin_menu', 'KWP_Admin_Hooker::show_admin_items');
 		add_filter('plugin_row_meta', 'KWP_Admin_Hooker::plugin_row_meta', 10, 2);
+		add_action('save_post', 'KWP_Admin_Hooker::save_page_options');
 	}
 
 	/**
@@ -33,25 +34,33 @@ class KWP_Admin_Hooker {
 	 * Function adds the Kohana options page to wordpress dashboard
 	 * @return
 	 */
-	static function load_admin_items() {
-		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "Kohana", "KWP_Admin_Hooker::load_control_panel");
-		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'KWP_Admin_Hooker::load_page_options', 'page', 'advanced' );
+	static function show_admin_items() {
+		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "Kohana", "KWP_Admin_Hooker::show_control_panel");
+		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'KWP_Admin_Hooker::show_page_options', 'page', 'advanced' );
 	}
 
 
 	/**
 	 * Adds a custom section Page edit screens titled "Kohana-WP Integration".
 	 */
-	static function load_page_options() {
+	static function show_page_options() {
+		self::page_options()->show();
+	}
+
+	static function save_page_options($post_id) {
+		self::page_options()->save($post_id);
+	}
+
+	static function page_options() {
 		include_once 'page_options.php';
-		kwp_page_inner_custom_box();
+		return new KWP_Admin_PageOptions();
 	}
 
 	/**
 	 * Function includes the Kohana options/admin page for display
 	 * @return
 	 */
-	static function load_control_panel() {
+	static function show_control_panel() {
 		include_once 'control_panel.php';
 	}
 }

@@ -19,7 +19,7 @@ class KWP_NonAdmin_Hooker {
 		 * Register Actions
 		 */
 		add_action('wp_head', 'KWP_NonAdmin_Hooker::wp_head');
-		add_action('widgets_init', create_function('', 'return register_widget("KWP_NonAdmin_Widget");'));
+		//add_action('widgets_init', create_function('', 'return register_widget("KohanaWidget");'));
 
 
 		/**

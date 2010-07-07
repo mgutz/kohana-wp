@@ -139,7 +139,6 @@ class KWP_Plugin {
 			$nonadmin = new KWP_NonAdmin_Hooker();
 			$nonadmin->register_hooks();
 		}
-
 	}
 
 	/**
