@@ -34,6 +34,10 @@ Good idea to start with a new database when I change the admin. Settings in DB c
 
 2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
+Things to watch out for:
+
+1. WordPress path constants end with '/'. Kohana paths do not.
+
 ## Plugin Load Sequence
 
 See `KWP_Plugin#main` method in `plugins/kohana-wp/kohana-wp.php`

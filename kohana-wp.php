@@ -21,7 +21,7 @@ class KWP_Plugin {
 	 * @static
 	 * @return void
 	 */
-	function define_constants_and_vars() {
+	function define_constants() {
 		// Directory containing MVC framework, modules and site applications. (not the plugin root)
 		define('KOHANA_ROOT', WP_CONTENT_DIR . '/kohana/');
 
@@ -33,6 +33,9 @@ class KWP_Plugin {
 
 		// Translation domain
 		define('KWP_DOMAIN', 'kwp_domain');
+
+		// NOTE: Other constants are defined in classes/kwp/non_admin/hooker#execute_request, these depend
+		// on dynamic application/controller paths, which are unknown until execution of a request
 	}
 
 	
@@ -123,8 +126,8 @@ class KWP_Plugin {
 	 *
 	 * @return void
 	 */
-	function main() {
-		$this->define_constants_and_vars();
+	function run() {
+		$this->define_constants();
 
 		$is_in_admin = (strpos($_SERVER['REQUEST_URI'], 'wp-admin/'));
 		if ($is_in_admin) {
@@ -136,24 +139,13 @@ class KWP_Plugin {
 		}
 		else {
 			include_once 'classes/kwp/non_admin/hooker.php';
-			$nonadmin = new KWP_NonAdmin_Hooker();
-			$nonadmin->register_hooks();
+			$non_admin = new KWP_NonAdmin_Hooker();
+			$non_admin->register_hooks();
 		}
-	}
-
-	/**
-	 * Runs the plugin.
-	 * 
-	 * @static
-	 * @return void
-	 */
-	static function run() {
-		$kwp = new KWP_Plugin();
-		$kwp->main();
 	}
 }
 
-KWP_Plugin::run();
-
+$kwp = new KWP_Plugin();
+$kwp->run();
 
 

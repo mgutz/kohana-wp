@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Page options controller.
+ */
 class KWP_Admin_PageOptions {
 
 	/**
@@ -38,38 +41,38 @@ class KWP_Admin_PageOptions {
 	/**
 	 * Save data entered in options box.
 	 */
-	function save($post_id) {
+	function save($page_id) {
 		// verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times
 
 		if (empty($_POST['kwp']['noncename'])) {
-			return $post_id;
+			return $page_id;
 		}
 
 		if (!wp_verify_nonce($_POST['kwp']['noncename'], plugin_basename(__FILE__))) {
-			return $post_id;
+			return $page_id;
 		}
 
 		// verify if this is an auto save routine. If it is our form has not been submitted, so we dont want
 		// to do anything
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
-			return $post_id;
+			return $page_id;
 
 
 		// Check permissions
 		if ('page' == $_POST['post_type']) {
-			if (!current_user_can('edit_page', $post_id))
-				return $post_id;
+			if (!current_user_can('edit_page', $page_id))
+				return $page_id;
 		}
 
 		// Add hidden metadata (underscore)
 		if (empty($_POST['kwp']['route'])) {
-			delete_post_meta($post_id, KWP_ROUTE);
-			delete_post_meta($post_id, KWP_ROUTE);
+			delete_post_meta($page_id, KWP_ROUTE);
+			delete_post_meta($page_id, KWP_ROUTE);
 		}
 		else {
-			$this->add_update_post_meta($post_id, KWP_ROUTE, $_POST['kwp']['route']);
-			$this->add_update_post_meta($post_id, KWP_PLACEMENT, $_POST['kwp']['placement']);
+			$this->add_update_post_meta($page_id, KWP_ROUTE, $_POST['kwp']['route']);
+			$this->add_update_post_meta($page_id, KWP_PLACEMENT, $_POST['kwp']['placement']);
 		}
 
 

@@ -48,7 +48,6 @@ class KWP_NonAdmin_Hooker {
 
 
 include_once 'widget.php';
-include_once 'kohana_index.php';
 
 
 /**
@@ -61,36 +60,6 @@ function is_kohana_request() {
 	global $wp;
 	return !empty($wp->kohana->request);
 }
-
-
-
-
-
-function bootstrap($app_path) {
-
-	static $bootstrapped = false;
-	if ($bootstrapped) return;
-	$bootstrapped = true;
-
-	if (!realpath($app_path)) {
-		throw new Exception("Invalid application path.", $app_path);
-	}
-	define('APPPATH', $app_path);
-	define('KWP_PAGEURL', get_permalink());
-	$app = substr(strrchr(trim(APPPATH, '/'), '/'), 1);
-	$prefix = strpos(KWP_PAGEURL, '?') ? '&kr=' : '?kr=';
-	define('KWP_HOSTURL', KWP_PAGEURL . $prefix);
-	define('KWP_APPURL', KWP_HOSTURL . $app . '/');
-
-	# TODO: Should bootstrap path be unique to application?
-	if (get_option('kwp_bootstrap_path')) {
-		include get_option('kwp_bootstrap_path');
-	} else {
-		include 'kohana_bootstrap.php';
-	}
-}
-
-
 
 
 
@@ -293,11 +262,29 @@ function kohana_request($kr) {
 function execute_request($kr) {
 	// [0] = application namespace
 	// [1] = controller/action/arg0/.../argn
-	list($app, $controller_rest) = explode('/', $kr, 2);
+	list($app, $controller, $rest) = explode('/', $kr, 3);
 	$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
 
-	bootstrap($app_path);
-	$result = Request::factory($controller_rest)->execute();
+	define('APPPATH', $app_path);
+	$page_url = get_permalink();
+	$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
+	define('KWP_PAGE_URL', $page_url . $prefix);
+	define('KWP_APP_URL', KWP_PAGE_URL . $app);
+	define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
+
+	include_once 'kohana_bootstrap.php';
+	$bootstrapper = new KohanaBootstrapper();
+	$bootstrapper->index();
+
+	# TODO: Should bootstrap path be unique to application?
+	#$custom_bootstrap = get_option('kwp_bootstrap_path');
+	#if ($custom_bootstrap !== false) {
+	#	include_once $custom_bootstrap;
+	#} else {
+		$bootstrapper->bootstrap();
+	#}
+
+	$result = Request::factory($controller . '/' . $rest)->execute();
 	return $result;
 }
 

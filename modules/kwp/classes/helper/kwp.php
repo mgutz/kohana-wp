@@ -43,15 +43,15 @@ class Helper_KWP {
 		$lead = substr($path, 0, 2);
 
 		if ($lead == '~/') {
-			$url = KWP_APPURL . substr($path, 2);
+			$url = KWP_APP_URL . '/' . substr($path, 2);
 		} elseif ($lead == '^/') {
-			$url = KWP_HOSTURL . substr($path, 2);
+			$url = KWP_PAGE_URL . substr($path, 2);
 		} elseif ($path[0] =='/') {
 			$url = $path;
 		} elseif ($lead == './') {
-			$url = KWP_APPURL . $this->controller_short_name . '/' . substr($path, 2);
+			$url = KWP_APP_URL . '/' . $this->controller_short_name . '/' . substr($path, 2);
 		} else {
-			$url = KWP_APPURL . $this->controller_short_name . '/' . $path;
+			$url = KWP_APP_URL . '/' . $this->controller_short_name . '/' . $path;
 		}
 
 		return $url;
