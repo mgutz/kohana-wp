@@ -50,7 +50,7 @@ set_error_handler(array('Kohana', 'error_handler'));
  */
 
 $kohana_base_url = str_replace(get_option('home'),'',get_option('siteurl') );
-if( ! $kohana_base_url ) {
+if (!$kohana_base_url) {
 	$kohana_base_url = '/';
 }
 Kohana::init(array('charset' => 'utf-8', 'base_url' => $kohana_base_url ));
@@ -117,4 +117,4 @@ Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => get_option('kwp_default_controller'),
 		'action' => get_option('kwp_default_action'),
-		'id' => get_option('kwp_default_id')));	
+		'id' => get_option('kwp_default_id')));

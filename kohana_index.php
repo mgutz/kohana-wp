@@ -22,7 +22,7 @@ if (!is_dir($modules)) {
 $system = get_option('kwp_system_path');
 if (!is_dir($system)) {
 	$system = KOHANA_ROOT . "framework/current/system/";
-	error_log("kwp_system_path option is invalid: $modules");
+	error_log("kwp_system_path option is invalid: $system");
 }
 
 /**
@@ -43,7 +43,7 @@ define('EXT', get_option('kwp_ext'));
  * In a production environment, it is safe to ignore notices and strict warnings.
  * Disable them by using: E_ALL ^ E_NOTICE
  */
-// error_reporting(E_ALL | E_STRICT);
+//error_reporting(E_ALL | E_STRICT);
 
 /**
  * End of standard configuration! Changing any of the code below should only be
@@ -54,7 +54,6 @@ define('EXT', get_option('kwp_ext'));
 
 // Set the full path to the docroot
 define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
-
 
 // Make the modules relative to the docroot
 if (!is_dir($modules) AND is_dir(DOCROOT . $modules))
@@ -90,6 +89,3 @@ require SYSPATH . 'classes/kohana/core' . EXT;
     // Load empty core extension
     require SYSPATH . 'classes/kohana' . EXT;
 #}
-
-// Bootstrap the application			***** Not including bootstrap in application path.
-// require APPPATH.'bootstrap'.EXT;

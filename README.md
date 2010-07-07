@@ -32,6 +32,16 @@ Plugin is not yet released. Please follow instructions in next section for now.
 
 2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
+## Load Sequence
+
+kohana-wp.php
+kwp.php
+kohana_index.php
+kohana_bootstrap.php
+
+
+
+
 ## Directory Structure
 
     WORDPRESS_SITE/
