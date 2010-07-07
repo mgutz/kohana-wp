@@ -280,9 +280,9 @@ if ($routes) {
 <tbody id="the-list" class="list:tag">
 <? foreach($routes as $route) { ?>
 	<tr id="cat-1" class="iedit alternate">
-	 	 <td class="description column-description"><?= $route->route ?></td>
-	 	 <td class="description column-description"><?= $route->post_title ?></td>
-	 	 <td class="slug column-slug"><?= edit_post_link('edit', '', '', $route->post_id); ?> | <a href="javascript:delete_route(<?= $route->post_id ?>)">delete</a></td>
+	 	 <td class="description column-description"><?php print $route->route; ?></td>
+	 	 <td class="description column-description"><?php print $route->post_title; ?></td>
+	 	 <td class="slug column-slug"><?php print edit_post_link('edit', '', '', $route->post_id); ?> | <a href="javascript:delete_route(<?php print $route->post_id; ?>)">delete</a></td>
 	</tr>
 <? } ?>
 </tbody>

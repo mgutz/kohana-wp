@@ -21,17 +21,17 @@ function kwp_page_inner_custom_box() {
 		$placement = get_option('kwp_default_placement') or 'replace';
 
 ?>
-	<input type="hidden" name="kwp[noncename]" value="<?= $nonce ?>" />
+	<input type="hidden" name="kwp[noncename]" value="<?php print $nonce; ?>" />
 
-	<p><strong><?= $route_label ?></strong></p>
-	<input type="text" name="kwp[route]" style="width: 100%;" value="<?= $route ?>" />
+	<p><strong><?php print $route_label; ?></strong></p>
+	<input type="text" name="kwp[route]" style="width: 100%;" value="<?php print $route; ?>" />
 	<p>format: app/controller(/action(/args))</p>
 
-	<p><strong><?= $output_label ?></strong></p>
+	<p><strong><?php print $output_label; ?></strong></p>
 	<select name="kwp[placement]">
-		<option value="before" <?= $placement == "before" ? "selected='true'" : '' ?>>Before Page Content</option>
-		<option value="replace" <?= $placement == "replace" ? "selected='true'" : '' ?>>Replace Page Content</option>
-		<option value="after" <?= $placement == "after" ? "selected='true'" : '' ?>>After Page Content</option>
+		<option value="before" <?php print $placement == "before" ? "selected='true'" : ''; ?>>Before Page Content</option>
+		<option value="replace" <?php print $placement == "replace" ? "selected='true'" : ''; ?>>Replace Page Content</option>
+		<option value="after" <?php print $placement == "after" ? "selected='true'" : ''; ?>>After Page Content</option>
 	</select>
 <?php
 }
