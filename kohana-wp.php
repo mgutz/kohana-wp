@@ -38,8 +38,6 @@ class KWP_Plugin {
 		// on dynamic application/controller paths, which are unknown until execution of a request
 	}
 
-	
-
 	/**
 	 * Function is called when plugin is activated by wordpress
 	 *

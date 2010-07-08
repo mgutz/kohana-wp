@@ -261,13 +261,13 @@ Kohana root: <b>wp-content/kohana</b>
 </div>
 <div id="kohana_routing_tab" style="display:<?php print ( $show_routing_tab ) ? '' : 'none' ?>">
 
-<?
+<?php
 $routes = get_page_routes();
 if ($routes) {
 ?>
 	<h3>Kohana Page Routing</h3>
 
-<? } ?>
+<?php } ?>
 
 <table class="widefat tag fixed" cellspacing="0">
 	<thead>
@@ -278,13 +278,13 @@ if ($routes) {
 	</tr>
 	</thead>
 <tbody id="the-list" class="list:tag">
-<? foreach($routes as $route) { ?>
+<?php foreach($routes as $route) { ?>
 	<tr id="cat-1" class="iedit alternate">
 	 	 <td class="description column-description"><?php print $route->route; ?></td>
 	 	 <td class="description column-description"><?php print $route->post_title; ?></td>
 	 	 <td class="slug column-slug"><?php print edit_post_link('edit', '', '', $route->post_id); ?> | <a href="javascript:delete_route(<?php print $route->post_id; ?>)">delete</a></td>
 	</tr>
-<? } ?>
+<?php } ?>
 </tbody>
 
 </table>
