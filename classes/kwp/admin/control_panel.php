@@ -177,30 +177,30 @@ Kohana root: <b>wp-content/kohana</b>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Kohana Module Path</strong></label>
-	<input type="text" name="kohana_module_path" value="<?php echo get_option('kwp_module_path'); ?>" size="40" aria-required="true" />	
+	<input type="text" name="kwp_module_path" value="<?php echo get_option('kwp_module_path'); ?>" size="40" aria-required="true" />
     <p>Enter the full path to your Kohana module folder.</p>
 </div>
 <div class="form-field form-required">
 	<label for="name"><strong>Kohana System Path</strong></label>
-	<input type="text" name="kohana_system_path" value="<?php echo get_option('kwp_system_path'); ?>" size="40" aria-required="true" />	
+	<input type="text" name="kwp_system_path" value="<?php echo get_option('kwp_system_path'); ?>" size="40" aria-required="true" />
     <p>Enter the full path to your Kohana system folder.</p>
 </div>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Custom Bootstrap Path</strong></label>
-	<input type="text" name="kohana_bootstrap_path" value="<?php echo get_option('kwp_bootstrap_path'); ?>" size="40" aria-required="true" />	
+	<input type="text" name="kwp_bootstrap_path" value="<?php echo get_option('kwp_bootstrap_path'); ?>" size="40" aria-required="true" />
     <p>If you want to use a custom bootstrap file then define the path here. Note you should use the file 
     <i>plugins/kohana-wp/kohana_bootstrap.php</i> as an example.</p>
 </div>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Kohana File Extension</strong></label>
-	<input type="text" name="kohana_ext" value="<?php echo get_option('kwp_ext'); ?>" size="40" aria-required="true" />	
+	<input type="text" name="kwp_ext" value="<?php echo get_option('kwp_ext'); ?>" size="40" aria-required="true" />
     <p>The default extension of resource files.</p>
 </div>
 <div class="form-field form-required">
 	<label for="name"><strong>Default Placement</strong></label>
-	<select name="kohana_default_placement"> 
+	<select name="kwp_default_placement">
 	 <option value="before" <?php if( get_option('kwp_default_placement')=='before') echo 'selected="true"'; ?>>Before Page Content</option> 
 	 <option value="after" <?php if( get_option('kwp_default_placement')=='after') echo 'selected="true"'; ?>>After Page Content</option> 
 	 <option value="replace" <?php if( get_option('kwp_default_placement')=='replace') echo 'selected="true"'; ?>>Replace Page Content</option> 
@@ -210,22 +210,22 @@ Kohana root: <b>wp-content/kohana</b>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Kohana Modules</strong></label>
-	<input type="input" name="kohana_modules" value="<?php print get_option('kwp_modules')?>"  />	
+	<input type="input" name="kwp_modules" value="<?php print get_option('kwp_modules')?>"  />
     <p>Enter a comma seperated list of Kohana modules that are referenced by your application</p>
 </div>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Kohana Default Controller / Action / ID </strong></label>
-	<input type="input" name="kohana_default_controller" value="<?php print get_option('kwp_default_controller')?>"  />	
-	<input type="input" name="kohana_default_action" value="<?php print get_option('kwp_default_action')?>"  />	
-	<input type="input" name="kohana_default_id" value="<?php print get_option('kwp_default_id')?>"  />	
+	<input type="input" name="kwp_default_controller" value="<?php print get_option('kwp_default_controller')?>"  />
+	<input type="input" name="kwp_default_action" value="<?php print get_option('kwp_default_action')?>"  />
+	<input type="input" name="kwp_default_id" value="<?php print get_option('kwp_default_id')?>"  />
     <p>Enter the default controller, action and optional id for your kohana application</p>
 </div>
 
 <?php if ( 0 != count( get_page_templates() ) ) { ?>
 <div class="form-field">
-	<label for="kohana_page_template"><strong>Kohana Page Template</strong></label>
-	<select name="kohana_page_template" id="kohana_page_template">
+	<label for="kwp_page_template"><strong>Kohana Page Template</strong></label>
+	<select name="kwp_page_template" id="kwp_page_template">
 	<option value='default'>Default Template</option>
 	<?php page_template_dropdown(get_option('kwp_page_template')); ?>
 	</select>
@@ -236,7 +236,7 @@ Kohana root: <b>wp-content/kohana</b>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Include Kohana Front Loader in Wordpress Navigation</strong></label>
-	<input type="checkbox" name="kohana_front_loader_in_nav" value="1" <?php print ( get_option('kwp_front_loader_in_nav') ) ? 'checked="true"' : '' ?>  />	
+	<input type="checkbox" name="kwp_front_loader_in_nav" value="1" <?php print ( get_option('kwp_front_loader_in_nav') ) ? 'checked="true"' : '' ?>  />
     <p>Kohana module creates a wordpress page when installed. This page basically becomes your kohana front loader. 
     Select the checkbox if you want this page to appear in your wordpress navigation. You can edit the details of this page 
 	<a href="<?php echo get_option('siteurl') ?>/wp-admin/page.php?action=edit&post=<?php echo get_option('kwp_front_loader') ?>">here</a>.</p>
@@ -244,14 +244,14 @@ Kohana root: <b>wp-content/kohana</b>
 
 <div class="form-field form-required">
 	<label for="name"><strong>Process all URIs</strong></label>
-	<input type="checkbox" name="kohana_process_all_uri" value="1" <?php print ( get_option('kwp_process_all_uri') ) ? 'checked="true"' : '' ?>  />	
+	<input type="checkbox" name="kwp_process_all_uri" value="1" <?php print ( get_option('kwp_process_all_uri') ) ? 'checked="true"' : '' ?>  />
     <p>If you turn this setting off then the plugin will only attempt to process Kohana controllers if requested from front loader page. If you turn this setting on
 	then the plugin will check for a valid Kohana controller for every request that isn't for a specific wordpress page or post.</p>
 </div>
 
 
   <input type="hidden" name="action" value="update" />
-  <input type="hidden" name="page_options" value="kohana_bootstrap_path,kohana_default_id,kohana_default_action,kohana_default_controller,kohana_modules,kohana_default_time_zone,kohana_base_url,kohana_system_path,kohana_module_path,kohana_ext,kohana_front_loader_in_nav,kohana_process_all_uri,kohana_default_placement,kohana_page_template" />
+  <input type="hidden" name="page_options" value="kwp_bootstrap_path,kwp_default_id,kwp_default_action,kwp_default_controller,kwp_modules,kwp_default_time_zone,kwp_base_url,kwp_system_path,kwp_module_path,kwp_ext,kwp_front_loader_in_nav,kwp_process_all_uri,kwp_default_placement,kwp_page_template" />
 <p class="submit"><input class="button" name="submit" value="Update Kohana Options" type="submit"></p>
 
 </form>
