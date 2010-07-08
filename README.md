@@ -34,13 +34,19 @@ Good idea to start with a new database when I change the admin. Settings in DB c
 
 2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
-Things to watch out for:
+Things to think about when coding:
 
-1. WordPress path constants end with '/'. Kohana paths do not.
+1. The biggest hurdle is the concept of application namespaces. Normally, there is
+   one application using Kohana MVC. This plugin allows multiple applications to live within
+   the framework. You MUST use `app_url`, `controller_url` when creating links
+   to an action or static asset. Kohana MVC applications are at the mercy of WordPress.
+   URLs may change based on SEO plugins, user customization etc. Pages may be moved.
+   
+2. WordPress path constants do not end with '/', Kohana path constants do.
 
 ## Plugin Load Sequence
 
-See `KWP_Plugin#main` method in `plugins/kohana-wp/kohana-wp.php`
+See `KWP_Plugin#run` method in `plugins/kohana-wp/kohana-wp.php`
 
 ### Kohana Execution
     TBD
@@ -69,4 +75,4 @@ See `KWP_Plugin#main` method in `plugins/kohana-wp/kohana-wp.php`
                 
 ## RoadMap
 
-Aug 2010 - Version 0.1 concentrate on supporting multiple applications and admin changes. Work in progress.
+Aug 2010 - Version 0.1 concentrate on the default stack (ORM, default teplate engine, multiple applications). WIP.
