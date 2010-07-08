@@ -19,14 +19,26 @@ class Controller_Mustache extends Controller {
 	public $page_url = KWP_PAGE_URL;
 
 	/**
-	 * Renders a Mustache view using a template only.
+	 * Renders a Mustache view.
+	 *
+	 * If a PHP class file resides in the same directory
+	 * as the template, the class will be instantiated. If not, the template
+	 * will be used directly.
 	 *
 	 * @parm $template_path The path of the template relative to classes/view.
 	 * @param $locals Local variables.
+	 * @param $ignore_class Ignore loading the class.
 	 * @return void
 	 */
-	function render($template_path, $locals = NULL) {
-		$this->request->response = $this->view($template_path, $locals);
+	function render($template_path, $locals = NULL, $ignore_class = false) {
+		if (!$ignore_class)
+			$class_file = Kohana::find_file('classes/view', $template_path);
+		
+		if ($class_file)
+			$view = $this->view_class($template_path, $locals);
+		else
+			$view = $this->view($template_path, $locals);
+		$this->request->response = $view;
 	}
 
 

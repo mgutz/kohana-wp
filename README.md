@@ -34,22 +34,29 @@ Good idea to start with a new database when I change the admin. Settings in DB c
 
 2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
 
-Things to think about when coding:
+## Default Stack
 
-1. The biggest hurdle is the concept of application namespaces. Normally, there is
-   one application using Kohana MVC. This plugin allows multiple applications to live within
-   the framework. You MUST use `app_url`, `controller_url` when creating links
+One of the good things about Kohana MVC is choices. One of the bad things about Kohana MVC is choices.
+
+Kohana-WP has a default stack:
+
+* Template Engine - Mustache (code-behind class is optional)
+* ORM - TBD, needs to be lightweight data mapper since WordPress has a schema already
+* Generators - Generators will be web based for a basic application and CRUD generator for Custom Post Types
+* Testing Framework - TBD
+
+## Things to Ponder
+
+1. The biggest hurdle, beside WordPress' non-object oriented framework is the concept of application spaces.
+   Normally, there is
+   one application using Kohana MVC. Kohana-WP allows multiple applications to coexist within
+   WordPress and each applicatoin is dynamically bootstrapped as needed. You MUST use `app_url`,
+   `controller_url` when creating links
    to an action or static asset. Kohana MVC applications are at the mercy of WordPress.
-   URLs may change based on SEO plugins, user customization etc. Pages may be moved.
+   URLs may change through SEO plugins, user customization etc. Pages may be moved.
    
 2. WordPress path constants do not end with '/', Kohana path constants do.
 
-## Plugin Load Sequence
-
-See `KWP_Plugin#run` method in `plugins/kohana-wp/kohana-wp.php`
-
-### Kohana Execution
-    TBD
 
 ## Directory Structure
 
@@ -71,7 +78,8 @@ See `KWP_Plugin#run` method in `plugins/kohana-wp/kohana-wp.php`
                     default/
             plugins/
                 kohana-wp/                #=> the plugin itself
-                    modules/              #=> utility classes, Controller_KWP, Helper_KWP ...
+                    classes/              #=> classes used to integrate with WordPress
+                    modules/              #=> custom base controllers, helpers and dependent libraries for use by apps
                 
 ## RoadMap
 
