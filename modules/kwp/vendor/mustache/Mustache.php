@@ -49,7 +49,7 @@ class Mustache {
 
 	protected $_tagRegEx;
 
-	protected $_template = '';
+	protected $_template = null;
 	protected $_context  = array();
 	protected $_partials = array();
 	protected $_pragmas  = array();
@@ -60,6 +60,45 @@ class Mustache {
 	);
 
 	protected $_localPragmas;
+
+	/**
+	 * templateBase directory.
+	 *
+	 * If this variable is not set, the template autoloader will assume that mustache templates
+	 * are located in the same directory as the class file, i.e. equivalent to:
+	 *
+	 *     protected $_templateBase = __DIR__;
+	 *
+	 * or, in < 5.3,
+	 *
+	 *     protected $_templateBase = dirname(__FILE__);
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_templateBase;
+
+	/**
+	 * Template file name.
+	 *
+	 * If none is specified, this will default to an underscorified version of the class name.
+	 * i.e. if your Mustache class is `FooBarBaz`, it will attempt to autoload a template named
+	 * `foo_bar_baz.mustache`.
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_templateName;
+
+	/**
+	 * File extension used to generate automatic template filenames.
+	 *
+	 * (default value: 'mustache')
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_templateExtension = 'mustache';
 
 	/**
 	 * Mustache class constructor.
@@ -77,6 +116,14 @@ class Mustache {
 		if ($template !== null) $this->_template = $template;
 		if ($partials !== null) $this->_partials = $partials;
 		if ($view !== null)     $this->_context = array($view);
+
+		// default template base is the current directory.
+		$this->_setTemplateBase($this->_templateBase);
+
+		// default template name is the underscorified class name.
+		if (!isset($this->_templateName)) {
+			$this->_templateName = strtolower(preg_replace('#(?<=[a-z0-9])([A-Z])#', '_\1', get_class($this)));
+		}
 	}
 
 	/**
@@ -102,6 +149,58 @@ class Mustache {
 	}
 
 	/**
+	 * Override the current templateBase.
+	 *
+	 * @access public
+	 * @param string $dir
+	 * @return void
+	 */
+	public function _setTemplateBase($dir = null) {
+		if ($dir == null) {
+			$ref = new ReflectionClass(get_class($this));
+			$dir = dirname($ref->getFileName());
+		}
+
+		if (substr($dir, -1) !== '/') {
+			$dir .= '/';
+		}
+		$this->_templateBase = $dir;
+	}
+
+	/**
+	 * Override the default templateName.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public function _setTemplateName($name) {
+		$this->_templateName = $name;
+	}
+
+	/**
+	 * Load a template file. This file will be relative to $this->_templateBase.
+	 * A '.mustache' file extension is assumed if none is provided in $file.
+	 *
+	 * @access public
+	 * @param string $name
+	 * @return void
+	 */
+	public function _loadTemplate($name) {
+		if (strpos($name, '.') === false) {
+			$name .= '.' . $this->_templateExtension;
+		}
+
+		$filename = $this->_templateBase . $name;
+		if (file_exists($filename)) {
+			$this->_template = file_get_contents($filename);
+		} else {
+			$this->_template = null;
+		}
+	}
+
+
+	/**
 	 * Render the given template and view object.
 	 *
 	 * Defaults to the template and view passed to the class constructor unless a new one is provided.
@@ -114,7 +213,15 @@ class Mustache {
 	 * @return string Rendered Mustache template.
 	 */
 	public function render($template = null, $view = null, $partials = null) {
-		if ($template === null) $template = $this->_template;
+
+		// Autoload template if none is explicitly set.
+		if ($template === null) {
+			if (!isset($this->_template)) {
+				$this->_loadTemplate($this->_templateName);
+			}
+			$template = $this->_template;
+		}
+
 		if ($partials !== null) $this->_partials = $partials;
 
 		if ($view) {
@@ -570,7 +677,9 @@ class Mustache {
 	/**
 	 * Retrieve the partial corresponding to the requested tag name.
 	 *
-	 * Silently fails (i.e. returns '') when the requested partial is not found.
+	 * Load a partial, either from $this->partials or from a file in the templateBase
+	 * directory. If throwPartialExceptions is not enabled, getPartial() silently fails
+	 * (i.e. returns '') when the requested partial is not found.
 	 *
 	 * @access protected
 	 * @param string $tag_name
@@ -582,11 +691,18 @@ class Mustache {
 			return $this->_partials[$tag_name];
 		}
 
+		// If no partial is explictly set, search for an appropriately named partial template file.
+		$filename = $this->_templateBase . $tag_name . '.' . $this->_templateExtension;
+		if (file_exists($filename)) {
+			$this->_partials[$tag_name] = file_get_contents($filename);
+			return $this->_partials[$tag_name];
+		}
+
 		if ($this->_throwsException(MustacheException::UNKNOWN_PARTIAL)) {
 			throw new MustacheException('Unknown partial: ' . $tag_name, MustacheException::UNKNOWN_PARTIAL);
-		} else {
-			return '';
 		}
+
+		return '';
 	}
 
 	/**
@@ -597,7 +713,7 @@ class Mustache {
 	 * @return bool
 	 */
 	protected function _varIsIterable($var) {
-		return $var instanceof Traversable || (is_array($var) && !array_diff_key($var, array_keys(array_keys($var))));
+		return is_object($var) || (is_array($var) && !array_diff_key($var, array_keys(array_keys($var))));
 	}
 }
 

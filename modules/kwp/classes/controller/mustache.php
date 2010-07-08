@@ -104,6 +104,8 @@ class Controller_Mustache extends Controller {
 		}
 
 		$mustache = new Mustache;
+		$base = dirname(APPPATH . 'classes/view/' . $template_path);
+		$mustache->_setTemplateBase($base);
 		return $mustache->render($content, $class, $vars);
 	}
 
