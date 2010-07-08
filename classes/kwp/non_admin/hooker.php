@@ -61,19 +61,6 @@ function is_kohana_request() {
 	return !empty($wp->kohana->request);
 }
 
-
-
-
-
-/**
- * Function returns false if Kohana is not set up
- * @return
- */
-function should_kohana_run() {
-	return true;
-}
-
-
 /**
  * Returns the post id if the request is for a valid wordpress page/post.
  * Returns false or 0 if the request is going to result in a wordpress 404.
@@ -141,7 +128,7 @@ function is_wp_homepage($full_uri) {
  * Function parses the query string to determine if a kohana request is being made.
  *
  * Function first looks for values assigned to 'kr' in the query string
- * eg:  example.com/index.php?kr=examples/pagination
+ * eg:  example.com/index.php?kr=app/controller/action
  *
  * If nothing is found in $_GET['kr'] function parses the _SERVER['REQUEST_URI'] and
  * looks for possible request in standard Kohana format
@@ -211,16 +198,13 @@ function kohana_parse_request() {
  * @return string  The response from the Kohana Request
  */
 function kohana_page_request($kr) {
-	if (!should_kohana_run())
+	if (empty($kr))
 		return '';
 	global $wp;
 
 	$kr = ($kr == 'wp_kohana_default_request') ? '' : $kr;
 
 	try {
-		# TODO isn't this the same?
-		#$req = Request::instance($kr);
-		#$req = $req->execute();
 		$req = execute_request($kr);
 	} catch (Exception $e) {
 		if ($req->status == 404) {
@@ -250,7 +234,9 @@ function kohana_request($kr) {
 	if (!$kr) {
 		return '';
 	}
-	return execute_request($kr)->response;
+
+	$result = execute_request($kr);
+	return is_string($result) ? $result : $result->response;
 }
 
 /**
@@ -266,6 +252,12 @@ function execute_request($kr) {
 	$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
 
 	define('APPPATH', $app_path);
+
+	$controller_path = $app_path . 'classes/controller/' . $controller . '.php';
+	if (!is_file($controller_path)) {
+		return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
+	}
+
 	$page_url = get_permalink();
 	$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
 	define('KWP_PAGE_URL', $page_url . $prefix);

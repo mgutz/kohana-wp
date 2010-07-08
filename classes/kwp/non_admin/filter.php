@@ -41,9 +41,6 @@ class KWP_NonAdmin_Filter {
 	 * @return string
 	 */
 	static function the_content($content) {
-		// if kohana isn't set up skip
-		if (!should_kohana_run()) return $content;
-
 		global $wp;
 		if (!empty($wp->kohana->content) && $wp->kohana->content) {
 			switch ($wp->kohana->placement) {
@@ -65,7 +62,8 @@ class KWP_NonAdmin_Filter {
 		$matches = array();
 		if (preg_match_all($tag, $content, $matches)) {
 			foreach ($matches[1] as $i => $match) {
-				$content = str_replace("[$exec " . trim($match) . ']', kohana_request(trim($match)), $content);
+				$output =  kohana_request(trim($match));
+				$content = str_replace("[$exec " . trim($match) . ']', $output, $content);
 			}
 		}
 
@@ -93,7 +91,7 @@ class KWP_NonAdmin_Filter {
 	 */
 	static function request($request) {
 		// if kohana isn't set up skip
-		if (empty($request) || !should_kohana_run()) return $request;
+		if (empty($request)) return $request;
 
 		global $wp;
 		global $wpdb;
@@ -172,7 +170,7 @@ class KWP_NonAdmin_Filter {
 	 */
 	static function wp($wp) {
 		// if kohana isn't set up skip
-		if (empty($wp->kohana->request) || !should_kohana_run()) return $wp;
+		if (empty($wp->kohana->request)) return $wp;
 
 		$wp->kohana->content = kohana_page_request($wp->kohana->request);
 		return $wp;
@@ -189,9 +187,6 @@ class KWP_NonAdmin_Filter {
 	 * @return string
 	 */
 	static function title($title) {
-		// if kohana isn't set up skip
-		if (!should_kohana_run()) return $title;
-
 		global $wp;
 		global $post;
 		if (!empty($wp->kohana->title) && $title == $post->post_title && $post->ID == get_option('kwp_front_loader')) {
