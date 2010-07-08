@@ -171,7 +171,8 @@ function kohana_parse_request() {
 
 	//error_log("Found Controller = $k_controller :: Examining: $kr");
 	// Check for the presence of a kohana controller for current request
-	if ($kr && is_file(KOHANA_ROOT . 'sites/all/' . $app . '/classes/controller/' . $controller . '.php')) {
+	$controller_path = doc_root($app) . "application/classes/controller/$controller.php";
+	if ($kr && is_file($controller_path)) {
 		return $kr;
 	}
 
@@ -187,6 +188,10 @@ function kohana_parse_request() {
 	}
 
 	return '';
+}
+
+function doc_root($app_name) {
+	return KOHANA_ROOT . 'sites' . DIRECTORY_SEPARATOR . 'all' . DIRECTORY_SEPARATOR . $app_name . DIRECTORY_SEPARATOR;
 }
 
 
@@ -251,9 +256,11 @@ function execute_request($kr) {
 	list($app, $controller, $rest) = explode('/', $kr, 3);
 	$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
 
-	define('APPPATH', $app_path);
+	// what is called an application is actually the docroot in Kohana
+	define('DOCROOT', $app_path);
+	define('APPPATH', DOCROOT . 'application' . DIRECTORY_SEPARATOR);
 
-	$controller_path = $app_path . 'classes/controller/' . $controller . '.php';
+	$controller_path = APPPATH . 'classes/controller/' . $controller . '.php';
 	if (!is_file($controller_path)) {
 		return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
 	}

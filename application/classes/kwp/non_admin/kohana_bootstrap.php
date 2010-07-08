@@ -5,27 +5,34 @@ class KohanaBootstrapper {
 	 * recreate Kohana 3.0 index.php file with some modifications
 	 */
 	function index() {
+
+		/*
+		 * DOCROOT/
+		 *     APPPATH/
+		 *     MODPATH/
+		 *     SYSPATH/
+		 */
+
+
+
 		/**
 		 * The directory in which your modules are located.
 		 *
 		 * @see  http://docs.kohanaphp.com/install#modules
 		 */
-		$modules = get_option('kwp_module_path');
-		if (!is_dir($modules)) {
-			$modules = KOHANA_ROOT . "framework/modules/";
-			error_log("kwp_module_path option is an invalid directory: $modules");
-		}
-
+		$modules = DOCROOT . 'modules' . DIRECTORY_SEPARATOR;
+		
 		/**
 		 * The directory in which the Kohana resources are located. The system
 		 * directory must contain the classes/kohana.php file.
 		 *
 		 * @see  http://docs.kohanaphp.com/install#system
 		 */
-		$system = get_option('kwp_system_path');
-		if (!is_dir($system)) {
-			$system = KOHANA_ROOT . "framework/current/system/";
-			error_log("kwp_system_path option is an invalid directory: $system");
+		$system = DOCROOT . 'system' . DIRECTORY_SEPARATOR;
+		if (!is_file($system . 'classes' . DIRECTORY_SEPARATOR . 'kohana.php')) {
+			// Fall back to kohana-wp/system/
+			error_log('Application/system not found. Using built-in: $system');
+			$system = KWP_ROOT . 'system' . DIRECTORY_SEPARATOR;
 		}
 
 		/**
@@ -55,20 +62,10 @@ class KohanaBootstrapper {
 		 * @see  http://docs.kohanaphp.com/bootstrap
 		 */
 
-		// Set the full path to the docroot
-		define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
-
-		// Make the modules relative to the docroot
-		if (!is_dir($modules) AND is_dir(DOCROOT . $modules))
-			$modules = DOCROOT . $modules;
-
-		// Make the system relative to the docroot
-		if (!is_dir($system) AND is_dir(DOCROOT . $system))
-			$system = DOCROOT . $system;
 
 		// Define the absolute paths for configured directories
-		define('MODPATH', realpath($modules) . DIRECTORY_SEPARATOR);
-		define('SYSPATH', realpath($system) . DIRECTORY_SEPARATOR);
+		define('MODPATH', $modules);
+		define('SYSPATH', $system);
 
 
 		// Clean up the configuration vars
@@ -197,12 +194,6 @@ class KohanaBootstrapper {
 			if (substr($name, -4) != '.off') {
 				$modules[$name] = $path;
 			}
-		}
-
-		// Add global modules if not defined the application
-		$selectable_modules = explode(',', get_option('kwp_modules') );
-		foreach ($selectable_modules as $m) {
-			$modules[trim($m)] = MODPATH.trim($m);
 		}
 
 		// Add application modules. Any module in an application's modules path will be installed!

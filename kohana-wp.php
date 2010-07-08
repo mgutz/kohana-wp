@@ -22,6 +22,8 @@ class KWP_Plugin {
 	 * @return void
 	 */
 	function define_constants() {
+		define('KWP_ROOT', WP_PLUGIN_DIR . '/kohana-wp/');
+		
 		// Directory containing MVC framework, modules and site applications. (not the plugin root)
 		define('KOHANA_ROOT', WP_CONTENT_DIR . '/kohana/');
 
@@ -131,12 +133,12 @@ class KWP_Plugin {
 		if ($is_in_admin) {
 			register_deactivation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::deactivate');
 			register_activation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::activate');
-			include_once 'classes/kwp/admin/hooker.php';
+			include_once 'application/classes/kwp/admin/hooker.php';
 			$admin = new KWP_Admin_Hooker();
 			$admin->register_hooks();
 		}
 		else {
-			include_once 'classes/kwp/non_admin/hooker.php';
+			include_once 'application/classes/kwp/non_admin/hooker.php';
 			$non_admin = new KWP_NonAdmin_Hooker();
 			$non_admin->register_hooks();
 		}

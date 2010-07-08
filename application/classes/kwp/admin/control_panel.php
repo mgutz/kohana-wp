@@ -12,25 +12,9 @@ if (!current_user_can('manage_options'))  {
 /**
  * Handle POSTs to this page
  */
-$show_routing_tab = ( $_POST && $_POST['action'] == 'add_page_routing' ) ? true : false;
+$show_routing_tab = true;
 $routes_updated = false;
-if( $show_routing_tab ){
-	if( $_POST['kr'] && $_POST['postid']){
-		$kr = $_POST['kr'];
-		$pid = $_POST['postid'];
-		$placement = ($_POST['placement']) ? $_POST['placement'] : 'after';
-		
-		$option_name = "kwp_route::$pid";
-		$option_value = "$kr::$placement";
-		
-		if( get_option($option_name) ){
-			update_option($option_name,$option_value);
-		} else {
-			add_option($option_name,$option_value);
-		}
-		$routes_updated = true;
-	}
-}
+
 /**
  * Handle Deleting Routing Option
  */
@@ -39,8 +23,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete_page_routing') {
 	delete_route($_POST['route_post_id'] );
 	$routes_updated = true;
 }
-
-$option_set = (get_option('kwp_system_path')) ? true : false;
 
 function delete_route($post_id) {
 	$sql = <<<SQL
@@ -91,7 +73,7 @@ SQL;
 
 
 ?>
-<?php if( $option_set ) : ?>
+
 <script>
 function wp_kohana_admin_showoptions()
 {
@@ -108,7 +90,7 @@ function wp_kohana_admin_showrouting()
 	document.getElementById('k_routing_link').className = 'active';
 }
 </script>
-<?php endif; ?>
+
 <style>
 #navmenu {
 	padding: 4px 0px 4px 0px;
@@ -151,7 +133,6 @@ function wp_kohana_admin_showrouting()
 
 <br class="clear">
 
-<?php if( $option_set ) : ?>
 <div id="navmenu">
 <ul>	
 	<li><a id="k_options_link" class="<?php print ( $show_routing_tab ) ? '' : 'active' ?>" href="javascript:wp_kohana_admin_showoptions()">Kohana Options</a></li>
@@ -159,15 +140,13 @@ function wp_kohana_admin_showrouting()
 </ul>
 </div>
 
-<?php endif; ?>
-
 <div id="kohana_options_tab" style="display:<?php print ( $show_routing_tab ) ? 'none' : '' ?>">
 
 <h3>Kohana Options</h3>
 
 <div>
-Kohana Front Loader is: <a href="<?php print $my_kohana_front ?>"><?php print $my_kohana_front ?></a>
-Kohana root: <b>wp-content/kohana</b>
+	<p>Kohana Front Loader is: <a href="<?php print $my_kohana_front ?>"><?php print $my_kohana_front ?></a></p>
+	<p>Kohana root (applications): <?php echo WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'kohana' . DIRECTORY_SEPARATOR . 'sites' . DIRECTORY_SEPARATOR . 'all' ?></p>
 </div>
 
 <div class="form-wrap">
@@ -176,29 +155,6 @@ Kohana root: <b>wp-content/kohana</b>
   <?php wp_nonce_field('update-options'); ?>
 
 <div class="form-field form-required">
-	<label for="name"><strong>Kohana Module Path</strong></label>
-	<input type="text" name="kwp_module_path" value="<?php echo get_option('kwp_module_path'); ?>" size="40" aria-required="true" />
-    <p>Enter the full path to your Kohana module folder.</p>
-</div>
-<div class="form-field form-required">
-	<label for="name"><strong>Kohana System Path</strong></label>
-	<input type="text" name="kwp_system_path" value="<?php echo get_option('kwp_system_path'); ?>" size="40" aria-required="true" />
-    <p>Enter the full path to your Kohana system folder.</p>
-</div>
-
-<div class="form-field form-required">
-	<label for="name"><strong>Custom Bootstrap Path</strong></label>
-	<input type="text" name="kwp_bootstrap_path" value="<?php echo get_option('kwp_bootstrap_path'); ?>" size="40" aria-required="true" />
-    <p>If you want to use a custom bootstrap file then define the path here. Note you should use the file 
-    <i>plugins/kohana-wp/kohana_bootstrap.php</i> as an example.</p>
-</div>
-
-<div class="form-field form-required">
-	<label for="name"><strong>Kohana File Extension</strong></label>
-	<input type="text" name="kwp_ext" value="<?php echo get_option('kwp_ext'); ?>" size="40" aria-required="true" />
-    <p>The default extension of resource files.</p>
-</div>
-<div class="form-field form-required">
 	<label for="name"><strong>Default Placement</strong></label>
 	<select name="kwp_default_placement">
 	 <option value="before" <?php if( get_option('kwp_default_placement')=='before') echo 'selected="true"'; ?>>Before Page Content</option> 
@@ -206,20 +162,6 @@ Kohana root: <b>wp-content/kohana</b>
 	 <option value="replace" <?php if( get_option('kwp_default_placement')=='replace') echo 'selected="true"'; ?>>Replace Page Content</option> 
 	</select>
     <p>Define if your want the results of Kohana controller requests to replace wordpress content or display before or after wordpress content.</p>
-</div>
-
-<div class="form-field form-required">
-	<label for="name"><strong>Kohana Modules</strong></label>
-	<input type="input" name="kwp_modules" value="<?php print get_option('kwp_modules')?>"  />
-    <p>Enter a comma seperated list of Kohana modules that are referenced by your application</p>
-</div>
-
-<div class="form-field form-required">
-	<label for="name"><strong>Kohana Default Controller / Action / ID </strong></label>
-	<input type="input" name="kwp_default_controller" value="<?php print get_option('kwp_default_controller')?>"  />
-	<input type="input" name="kwp_default_action" value="<?php print get_option('kwp_default_action')?>"  />
-	<input type="input" name="kwp_default_id" value="<?php print get_option('kwp_default_id')?>"  />
-    <p>Enter the default controller, action and optional id for your kohana application</p>
 </div>
 
 <?php if ( 0 != count( get_page_templates() ) ) { ?>
@@ -251,7 +193,7 @@ Kohana root: <b>wp-content/kohana</b>
 
 
   <input type="hidden" name="action" value="update" />
-  <input type="hidden" name="page_options" value="kwp_bootstrap_path,kwp_default_id,kwp_default_action,kwp_default_controller,kwp_modules,kwp_default_time_zone,kwp_base_url,kwp_system_path,kwp_module_path,kwp_ext,kwp_front_loader_in_nav,kwp_process_all_uri,kwp_default_placement,kwp_page_template" />
+  <input type="hidden" name="page_options" value="kwp_default_time_zone,kwp_front_loader_in_nav,kwp_process_all_uri,kwp_default_placement,kwp_page_template" />
 <p class="submit"><input class="button" name="submit" value="Update Kohana Options" type="submit"></p>
 
 </form>
@@ -302,12 +244,9 @@ function delete_route(post_id) {
 </form>
 
 
-<?php if( $option_set ) : ?>
 <div class="form-wrap">
 	<p>Route entries are added by editing a Page through the Pages menu on the left hand side. Look for <b>Kohana-WP Integration</b> box.</p>
 </div>
-
-<?php endif; // END IF OPTIONS_SET ?>
 
 </div>
 </div>
