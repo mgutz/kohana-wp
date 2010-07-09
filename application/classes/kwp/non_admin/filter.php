@@ -10,6 +10,17 @@
 class KWP_NonAdmin_Filter {
 
 	/**
+	 * print any extra_head html that has been assigned to the Kohana request.
+	 */
+	static function wp_head() {
+		global $wp;
+		if (KWP_NonAdmin_Request::is_kohana_request() && !empty($wp->kohana->extra_head)) {
+			print $wp->kohana->extra_head;
+		}
+	}
+	
+
+	/**
 	 * Function provides a filter on the wordpress list of pages typically used to build
 	 * navigation in templates. Function will remove the Kohana front loader unless the option
 	 * to include this page is present.
@@ -62,7 +73,7 @@ class KWP_NonAdmin_Filter {
 		$matches = array();
 		if (preg_match_all($tag, $content, $matches)) {
 			foreach ($matches[1] as $i => $match) {
-				$output =  kohana_request(trim($match));
+				$output =  KWP_NonAdmin_Request::execute_route(trim($match));
 				$content = str_replace("[$exec " . trim($match) . ']', $output, $content);
 			}
 		}
@@ -100,7 +111,7 @@ class KWP_NonAdmin_Filter {
 		$wp->kohana->front_loader_slug = $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID = " . get_option('kwp_front_loader'));
 
 		// attempt to validate the request by looking for a post or page id
-		$requested_post_id = kohana_validate_wp_request($request);
+		$requested_post_id = KWP_NonAdmin_Request::kohana_validate_wp_request($request);
 		//error_log( "Found the post/page id of $requested_post_id" );
 
 
@@ -108,7 +119,7 @@ class KWP_NonAdmin_Filter {
 		if (!$requested_post_id && get_option('kwp_process_all_uri')) {
 			//error_log( "No page found and process all uri is enabled. Examining uri for Kohana controller request" );
 			// Parse query string and look for kohana type requests
-			$kohana_request = kohana_parse_request();
+			$kohana_request = KWP_NonAdmin_Request::kohana_parse_request();
 
 			if ($kohana_request) {
 				$wp->kohana->request = $kohana_request;
@@ -122,7 +133,7 @@ class KWP_NonAdmin_Filter {
 		}
 		elseif ($requested_post_id == get_option('kwp_front_loader')) {
 			//error_log( "Request for Kohana front loader provided. Examine URI for Kohana controller request" );
-			$kohana_request = kohana_parse_request();
+			$kohana_request = KWP_NonAdmin_Request::kohana_parse_request();
 			error_log("Kohana request is $kohana_request");
 			$wp->kohana->request = ($kohana_request) ? $kohana_request : 'wp_kohana_default_request';
 			$wp->kohana->placement = get_option('kwp_default_placement');
@@ -140,7 +151,7 @@ class KWP_NonAdmin_Filter {
 				// a kohana view may have linked to a controller/action different than the start controller/action
 				// assigned in wp-admin, e.g. a page that hosts a multi-form kohana application
 				if (isset($_GET['kr']) || isset($_POST['kr'])) {
-					$kohana_request = kohana_parse_request();
+					$kohana_request = KWP_NonAdmin_Request::kohana_parse_request();
 					if ($kohana_request) {
 						$wp->kohana->request = $kohana_request;
 					}
@@ -172,7 +183,7 @@ class KWP_NonAdmin_Filter {
 		// if kohana isn't set up skip
 		if (empty($wp->kohana->request)) return $wp;
 
-		$wp->kohana->content = kohana_page_request($wp->kohana->request);
+		$wp->kohana->content = KWP_NonAdmin_Request::kohana_page_request($wp->kohana->request);
 		return $wp;
 	}
 
@@ -202,7 +213,7 @@ class KWP_NonAdmin_Filter {
 	 * @return string
 	 */
 	static function page_template($template) {
-		if (is_kohana_request() && get_option('kwp_page_template')) {
+		if (KWP_NonAdmin_Request::is_kohana_request() && get_option('kwp_page_template')) {
 			return locate_template(array(get_option('kwp_page_template')));
 		}
 		return $template;

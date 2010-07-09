@@ -11,9 +11,8 @@ I hope if you find benefit in using the plugin, you consider contributing back t
 
 ## Description
 
-Kohana-WP gives developers the tools needed to efficiently and correctly build 
-web applications using the Kohana 3 HMVC framework. Kohana-WP is intended for developers 
-experienced in HTML, Javascript and PHP.
+Kohana-WP allows developers to use Kohana MVC framewor5k to efficiently and happily build 
+web applications. Kohana-WP is for developers experienced in HTML, Javascript and PHP.
 
 ## Installation
 
