@@ -64,13 +64,14 @@ Directory structure for applications follows the convention of Kohana MVC applic
     WORDPRESS_SITE/
         wp-content/
             kohana/
-                sites/                    #=> non-member end-user tier (premium/ is an internal tier at my startup)
+                sites/                    #=> non-member end-user tier (premium/ is another internal tier at my startup)
                     all/                  #=> selectable apps for this tier
                         app_name_1/
                             application/    
                             classes/
                             ...
-                            modules/      #=> app module dependencies (if any) public/       #=> static assets
+                            modules/      #=> app module dependencies, if any
+                            public/       #=> static assets
                             system/       #=> Kohana MVC framework (optional but recommended)
                         ...
                         app_name_2/
