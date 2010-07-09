@@ -59,26 +59,27 @@ Kohana-WP has a default stack:
 
 ## Directory Structure
 
+Directory structure for applications follows the convention of Kohana MVC applications. 
+
     WORDPRESS_SITE/
         wp-content/
             kohana/
-                framework/                #=> different Kohana versions (selectable in future admin)
-                    current/
-                        system/
-                    kohana-3.0.6.2/
-                modules/
-                sites/                    
-                    all/                  #=> available applications to all sites (preparing for MU use)
-                        app1/
+                sites/                    #=> non-member end-user tier (premium/ is an internal tier at my startup)
+                    all/                  #=> selectable apps for this tier
+                        app_name_1/
+                            application/    
                             classes/
                             ...
-                            modules/      #=> apps can override modules
-                        app2/
-                    default/
+                            modules/      #=> app module dependencies (if any) public/       #=> static assets
+                            system/       #=> Kohana MVC framework (optional but recommended)
+                        ...
+                        app_name_2/
+                    default/              #=> default apps for this tier
             plugins/
                 kohana-wp/                #=> the plugin itself
-                    classes/              #=> classes used to integrate with WordPress
+                    application/          #=> classes to integrate with WordPress
                     modules/              #=> custom base controllers, helpers and dependent libraries for use by apps
+                    system/               #=> default Kohana MVC framework
                 
 ## RoadMap
 
