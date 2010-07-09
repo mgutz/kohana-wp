@@ -5,5 +5,4 @@
 *.swo
 *.swp 
 .*.swp
-kohana/
 logs/
