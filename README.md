@@ -31,7 +31,7 @@ Good idea to start with a new database when I change the admin. Settings in DB c
         cd ..
         git clone git://github.com/mgutz/kohana-wp-examples.git kohana
 
-2. Copy and paste `plugins/kohana-wp/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`
+2. Copy and paste entries in `docs/htaccess.example` entries into `WORDPRESS_SITE/.htaccess`.
 
 ## Default Stack
 
@@ -77,7 +77,7 @@ Directory structure for applications follows the convention of Kohana MVC applic
                         app_name_2/
                     default/              #=> default apps for this tier
             plugins/
-                kohana-wp/                #=> the plugin itself
+                kohana-wp/                #=> the plugin
                     application/          #=> classes to integrate with WordPress
                     modules/              #=> custom base controllers, helpers and dependent libraries for use by apps
                     system/               #=> default Kohana MVC framework

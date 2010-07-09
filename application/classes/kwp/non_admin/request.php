@@ -121,17 +121,20 @@ class KWP_NonAdmin_Request {
 		if ($kr && is_file($controller_path)) {
 			return $kr;
 		}
+		
+		throw new Exception("Controller does not exist for route: $controller_path");
 
-		// Look for a defined route
-		if ($kr) {
-			$defined_routes = Route::all();
-			if (isset($defined_routes[$kr])) {
-				return $kr;
-			}
-			else {
-				error_log("Invalid Kohana route: $kr");
-			}
-		}
+		// TODO: application defined routes are not known yet.
+		//       May need init script which allows apps to register routs with the sytem. e
+//		if ($kr) {
+//			$defined_routes = Route::all();
+//			if (isset($defined_routes[$kr])) {
+//				return $kr;
+//			}
+//			else {
+//				error_log("Invalid Kohana route: $kr");
+//			}
+//		}
 
 		return '';
 	}
@@ -230,7 +233,7 @@ class KWP_NonAdmin_Request {
 	 * @return string
 	 */
 	private static function doc_root($app_name) {
-		return KOHANA_ROOT . 'sites/all/$app_name/';
+		return KOHANA_ROOT . "sites/all/$app_name/";
 	}
 
 	/**
