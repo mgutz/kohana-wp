@@ -56,5 +56,44 @@ class Helper_KWP {
 
 		return $url;
 	}
+
+	/**
+	 * Converts a literal array, into an object array.
+	 *
+	 * @example
+	 * 		$arr = array('apple, 'orange');
+	 * 		$items = objectify($arr);
+	 * 		foreach ($item in $items) {
+	 * 			echo $item.i . ' => ' . $item.value . '\n';
+	 * 		}
+	 *
+	 * 	prints
+	 * 		0 => apple
+	 * 		1 => orange
+	 *
+	 * @static
+	 * @param  $literal_array
+	 * @param string $key
+	 * @return void
+	 */
+	static function objectify($literal_array, $index_key = 'i', $value_key = 'value', $skip_empty = true) {
+		if (!($literal_array)) {
+			return $literal_array;
+		}
+		$result = array();
+		$i = 0;
+		foreach ($literal_array as $item) {
+			if ($skip_empty && empty($item))
+				continue;
+
+			$o = new stdClass();
+			$o->$index_key = $i;
+			$o->$value_key = $item;
+			$result[] = $o;
+			$i++;
+		}
+
+		return $result;
+	}
 }
 ?>

@@ -64,23 +64,46 @@ Directory structure for applications follows the convention of Kohana MVC applic
     WORDPRESS_SITE/
         wp-content/
             kohana/
-                sites/                    #=> non-member end-user tier (premium/ is another internal tier at my startup)
-                    all/                  #=> selectable apps for this tier
+                sites/                      #=> non-member end-user tier (premium/ is another internal tier at my startup)
+                    all/                    #=> selectable apps for this tier
                         app_name_1/
                             application/    
                             classes/
                             ...
-                            modules/      #=> app module dependencies, if any
-                            public/       #=> static assets
-                            system/       #=> Kohana MVC framework (optional but recommended)
+                            modules/        #=> app module dependencies, if any
+                            public/         #=> static assets
+                            system/         #=> Kohana MVC framework (optional but recommended)
                         ...
                         app_name_2/
-                    default/              #=> default apps for this tier
+                    default/                #=> default apps for this tier
             plugins/
-                kohana-wp/                #=> the plugin
-                    application/          #=> classes to integrate with WordPress
-                    modules/              #=> custom base controllers, helpers and dependent libraries for use by apps
-                    system/               #=> default Kohana MVC framework
+                kohana-wp/                  #=> the plugin
+                    application/            #=> classes to integrate with WordPress
+                    modules/                #=> custom base controllers, helpers and dependent libraries for use by apps
+                    system/                 #=> default Kohana MVC framework
+
+## Constants
+
+    WORDPRESS_SITE/                         #=> ABSPATH
+        wp-content/                         #=> WP_CONTENT_DIR
+            kohana/                         #=> KOHANA_ROOT
+                sites/                      
+                    all/                    
+                        app_name_1/         #=> DOCROOT
+                            application/    #=> APPPATH 
+                            classes/
+                            ...
+                            modules/        #=> MODPATH
+                            public/         #=> PUBPATH 
+                            system/         #=> SYSPATH
+                        ...
+                        app_name_2/
+                    default/                
+            plugins/
+                kohana-wp/                  #=> KWP_ROOT 
+                    application/            
+                    modules/                
+                    system/                 
                 
 ## RoadMap
 

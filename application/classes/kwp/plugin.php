@@ -26,7 +26,7 @@ class KWP_Plugin {
 		// Translation domain
 		define('KWP_DOMAIN', 'kwp_domain');
 
-		// NOTE: Other constants are defined in classes/kwp/non_admin/hooker#execute_route, these depend
+		// NOTE: Other constants are defined in classes/kwp/nonadmin/hooker#execute_route, these depend
 		// on dynamic application/controller paths, which are unknown until execution of a request
 	}
 
@@ -128,7 +128,7 @@ class KWP_Plugin {
 			$admin->register_hooks();
 		}
 		else {
-			include_once 'non_admin/hooker.php';
+			include_once 'nonadmin/hooker.php';
 			$non_admin = new KWP_NonAdmin_Hooker();
 			$non_admin->register_hooks();
 		}

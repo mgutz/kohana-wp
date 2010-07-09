@@ -190,24 +190,10 @@ class KWP_NonAdmin_Request {
 		// [0] = application namespace
 		// [1] = controller/action/arg0/.../argn
 		list($app, $controller, $rest) = explode('/', $kr, 3);
-		$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
+		self::define_app_based_constants($app, $controller);
 
-		// what is called an application is actually the docroot in Kohana
-		define('DOCROOT', $app_path);
-		define('APPPATH', DOCROOT . 'application' . DIRECTORY_SEPARATOR);
-
-		$controller_path = APPPATH . 'classes/controller/' . $controller . '.php';
-		if (!is_file($controller_path)) {
-			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
-		}
-
-		$page_url = get_permalink();
-		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
-		define('KWP_PAGE_URL', $page_url . $prefix);
-		define('KWP_APP_URL', KWP_PAGE_URL . $app);
-		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
-
-		include_once 'kohana_bootstrap.php';
+		// DOCROOT cmust be defined
+		include_once 'kohanabootstrapper.php';
 		$bootstrapper = new KohanaBootstrapper();
 		$bootstrapper->index();
 
@@ -221,6 +207,24 @@ class KWP_NonAdmin_Request {
 
 		$result = Request::factory($controller . '/' . $rest)->execute();
 		return $result;
+	}
+
+	private static function define_app_based_constants($app, $controller) {
+		$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
+
+		// what is called an application is actually the docroot in Kohana
+		define('DOCROOT', $app_path);
+
+		$controller_path = DOCROOT . "application/classes/controller/$controller.php";
+		if (!is_file($controller_path)) {
+			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
+		}
+
+		$page_url = get_permalink();
+		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
+		define('KWP_PAGE_URL', $page_url . $prefix);
+		define('KWP_APP_URL', KWP_PAGE_URL . $app);
+		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
 	}
 
 

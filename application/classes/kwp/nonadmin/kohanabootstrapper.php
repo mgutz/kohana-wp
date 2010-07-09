@@ -6,14 +6,10 @@ class KohanaBootstrapper {
 	 */
 	function index() {
 
-		/*
-		 * DOCROOT/
-		 *     APPPATH/
-		 *     MODPATH/
-		 *     SYSPATH/
-		 */
-
-
+		$application = DOCROOT . 'application' . DIRECTORY_SEPARATOR;
+		if (!is_dir($application)) {
+			throw new Exception("Kohana application directory not found: $application");
+		}
 
 		/**
 		 * The directory in which your modules are located.
@@ -41,7 +37,7 @@ class KohanaBootstrapper {
 		 *
 		 * @see  http://docs.kohanaphp.com/install#ext
 		 */
-		define('EXT', get_option('kwp_ext'));
+		define('EXT', '.php');
 
 		/**
 		 * Set the PHP error reporting level. If you set this in php.ini, you remove this.
@@ -62,14 +58,12 @@ class KohanaBootstrapper {
 		 * @see  http://docs.kohanaphp.com/bootstrap
 		 */
 
-
 		// Define the absolute paths for configured directories
+		define('APPPATH', $application);
 		define('MODPATH', $modules);
+		define('PUBPATH', DOCROOT . 'public/');
 		define('SYSPATH', $system);
 
-
-		// Clean up the configuration vars
-		unset($modules, $system);
 
 		// Define the start time of the application
 		define('KOHANA_START_TIME', microtime(TRUE));
@@ -177,18 +171,13 @@ class KohanaBootstrapper {
 
 
 	/**
-	 * Register Kohana modules. Application modules have higher
-	 * precedence than global modules. KWP may also be overriden.
+	 * Register Kohana modules.
 	 *
-	 * Any module found beneath an application folder are registered.
-	 *
-	 * Application modules installed: WORDPRESS_ROOT/wp-content/kohana/sites/all/<application>/modules
-	 * Global modules instaled: WORDPRESS_ROOT/wp-content/kohana/modules
-	 *
-	 * TODO: Sholdn't the framework be isolated as well?
+	 * All modules located inside an applications modules/ folder are registered unless the module module
+	 * directory is suffixed with '.off'.
 	 */
 	function register_modules() {
-		// Add KWP modules, any module beneat kohana-wp/modules will be installed, unless the name ends with '.off'!
+		// Add KWP modules, any module beneat kohana-wp/modules will be installed, unless the name ends with '.off'
 		$kwp_modules = $this->get_dir_names(WP_PLUGIN_DIR . '/kohana-wp/modules');
 		foreach ($kwp_modules as $name => $path) {
 			if (substr($name, -4) != '.off') {
@@ -196,7 +185,8 @@ class KohanaBootstrapper {
 			}
 		}
 
-		// Add application modules. Any module in an application's modules path will be installed!
+		// Add application modules. Any module in an application's modules path will be installed, unless the name
+		// ends with '.off'
 		$app_modules = $this->get_dir_names(APPPATH . 'modules');
 		foreach ($app_modules as $name => $path) {
 			if (substr($name, -4) != '.off') {

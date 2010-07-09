@@ -4,7 +4,6 @@ require_once 'request.php';
 require_once 'filter.php';
 require_once 'widget.php';
 
-
 /**
  * Registers for non-administration hooks.
  */
