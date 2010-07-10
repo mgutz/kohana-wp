@@ -68,18 +68,22 @@ Directory structure for applications follows the convention of Kohana MVC applic
                     all/                    #=> selectable apps for this tier
                         app_name_1/
                             application/    
-                            classes/
-                            ...
-                            modules/        #=> app module dependencies, if any
+                                classes/        #=> controllers, models
+                                ...
+                            modules/        #=> app modules (all are loaded, suffix with .off to disable)
+                                auth.off/
+                                mustache.off/
+                                db/
                             public/         #=> static assets
                             system/         #=> Kohana MVC framework (optional but recommended)
+                            views/          #=> templates and code-behind classes
                         ...
                         app_name_2/
                     default/                #=> default apps for this tier
             plugins/
                 kohana-wp/                  #=> the plugin
                     application/            #=> classes to integrate with WordPress
-                    modules/                #=> custom base controllers, helpers and dependent libraries for use by apps
+                    modules/                #=> custom controller, views and helpers to faciliate creating applications
                     system/                 #=> default Kohana MVC framework
 
 ## Constants
