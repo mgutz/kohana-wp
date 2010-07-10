@@ -1,4 +1,4 @@
-<?php
+<?php defined('KWP_DOCROOT') or die('No direct script access.');
 
 
 /**

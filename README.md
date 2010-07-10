@@ -86,13 +86,12 @@ Directory structure for applications follows the convention of Kohana MVC applic
 
     WORDPRESS_SITE/                         #=> ABSPATH
         wp-content/                         #=> WP_CONTENT_DIR
-            kohana/                         #=> KOHANA_ROOT
+            kohana/                         #=> KOHANA_ABSPATH
                 sites/                      
                     all/                    
                         app_name_1/         #=> DOCROOT
                             application/    #=> APPPATH 
-                            classes/
-                            ...
+                                classes/
                             modules/        #=> MODPATH
                             public/         #=> PUBPATH 
                             system/         #=> SYSPATH
@@ -100,10 +99,12 @@ Directory structure for applications follows the convention of Kohana MVC applic
                         app_name_2/
                     default/                
             plugins/
-                kohana-wp/                  #=> KWP_ROOT 
-                    application/            
-                    modules/                
-                    system/                 
+                kohana-wp/                  #=> KWP_DOCROOT
+                    application/            #=> KWP_APPPATH
+                        classes/
+                    modules/                #=> KWP_MODPATH
+                    public/                 #=> KWP_PUBPATH
+                    system/                 #=> KWP_SYSPATH
                 
 ## RoadMap
 

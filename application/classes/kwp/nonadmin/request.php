@@ -1,4 +1,5 @@
-<?php
+<?php defined('KWP_DOCROOT') or die('No direct script access.');
+
 /**
  * Created by PhpStorm.
  * User: mgutz
@@ -182,49 +183,65 @@ class KWP_NonAdmin_Request {
 	 * @param  string $kr Kohana request segment. application/controller/action/arg0/.../argn
 	 * @return Kohana_Request
 	 */
-	static function execute_route($kr) {
-		if (!($kr) || !preg_match('/^[a-z_][a-z0-9_]*\/[a-z_][a-z0-9_]*\/?([a-z_][a-z0-9_]*)?/i', $kr)) {
-			error_log("Invalid kohana route: $kr");
+	static function execute_route($route) {
+		if (!($route) || !preg_match('/^[a-z_][a-z0-9_]*\/[a-z_][a-z0-9_]*\/?([a-z_][a-z0-9_]*)*/i', $route)) {
+			error_log("Invalid kohana route: $route");
 		}
 
+		$app_root = self::app_specific_setup($route);
+		self::load_kohana($app_root);
+
+		list($app, $kohana_route) = explode('/', $route, 2);
+		$result = Request::factory($kohana_route)->execute();
+
+		return $result;
+	}
+
+	private static function app_specific_setup($route) {
 		// [0] = application namespace
 		// [1] = controller/action/arg0/.../argn
-		list($app, $controller, $rest) = explode('/', $kr, 3);
-		self::define_app_based_constants($app, $controller);
+		list($app_name, $controller, $rest) = explode('/', $route, 3);
 
-		// DOCROOT cmust be defined
+		$app_root = KOHANA_ABSPATH . 'sites/all/' . $app_name;
+		$controller_path = "$app_root/application/classes/controller/$controller.php";
+		if (!is_file($controller_path)) {
+			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
+		}
+
+		// define constants for URL helpers
+		$page_url = get_permalink();
+		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
+		define('KWP_PAGE_URL', $page_url . $prefix);
+		define('KWP_APP_URL', KWP_PAGE_URL . $app_name);
+		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
+		
+		return $app_root;
+	}
+
+	private static function load_kohana($docroot) {
+
+		// use Kohana-WP's default system if application does not provide it
+		if (is_file($docroot.'/system/classes/kohana/core.php')) {
+			$system = 'system';
+		} 
+		else {
+			$system = KWP_DOCROOT.'system';
+		}
+
 		include_once 'kohanabootstrapper.php';
-		$bootstrapper = new KohanaBootstrapper();
-		$bootstrapper->index();
+		$kohana = new KohanaBootstrapper();
+		$kohana->index($docroot, 'application', 'modules', $system);
+		$kohana->bootstrap();
+
 
 		# TODO: Should bootstrap path be unique to application?
 		#$custom_bootstrap = get_option('kwp_bootstrap_path');
 		#if ($custom_bootstrap !== false) {
 		#	include_once $custom_bootstrap;
 		#} else {
-			$bootstrapper->bootstrap();
+		#	$kohana->bootstrap();
 		#}
 
-		$result = Request::factory($controller . '/' . $rest)->execute();
-		return $result;
-	}
-
-	private static function define_app_based_constants($app, $controller) {
-		$app_path = KOHANA_ROOT . 'sites/all/' . $app . '/';
-
-		// what is called an application is actually the docroot in Kohana
-		define('DOCROOT', $app_path);
-
-		$controller_path = DOCROOT . "application/classes/controller/$controller.php";
-		if (!is_file($controller_path)) {
-			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
-		}
-
-		$page_url = get_permalink();
-		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
-		define('KWP_PAGE_URL', $page_url . $prefix);
-		define('KWP_APP_URL', KWP_PAGE_URL . $app);
-		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
 	}
 
 
@@ -237,7 +254,7 @@ class KWP_NonAdmin_Request {
 	 * @return string
 	 */
 	private static function doc_root($app_name) {
-		return KOHANA_ROOT . "sites/all/$app_name/";
+		return KOHANA_ABSPATH . "sites/all/$app_name/";
 	}
 
 	/**

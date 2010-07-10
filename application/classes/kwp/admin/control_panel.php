@@ -1,4 +1,5 @@
-<?php 
+<?php defined('KWP_DOCROOT') or die('No direct script access.');
+
 if (!current_user_can('manage_options'))  {
   wp_die( __('You do not have sufficient permissions to access this page.') );
 }

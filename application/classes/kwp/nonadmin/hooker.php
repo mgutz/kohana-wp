@@ -1,4 +1,4 @@
-<?php
+<?php defined('KWP_DOCROOT') or die('No direct script access.');
 
 require_once 'request.php';
 require_once 'filter.php';

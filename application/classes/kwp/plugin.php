@@ -12,10 +12,10 @@ class KWP_Plugin {
 	 * @return void
 	 */
 	function define_constants() {
-		define('KWP_ROOT', WP_PLUGIN_DIR . '/kohana-wp/');
+		define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
 
 		// Directory containing MVC framework, modules and site applications. (not the plugin root)
-		define('KOHANA_ROOT', WP_CONTENT_DIR . '/kohana/');
+		define('KOHANA_ABSPATH', WP_CONTENT_DIR . '/kohana/');
 
 		// Meta key for route.
 		define('KWP_ROUTE', '_kwp_route');

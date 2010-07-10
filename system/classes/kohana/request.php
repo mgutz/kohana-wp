@@ -1030,7 +1030,7 @@ class Kohana_Request {
 		catch (Exception $e)
 		{
 			// Restore the previous request
-			Request::$current = $previous;
+      			Request::$current = $previous;
 
 			if (isset($benchmark))
 			{
