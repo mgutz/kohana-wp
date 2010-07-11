@@ -68,7 +68,7 @@ Directory structure for applications follows the convention of Kohana MVC applic
                     all/                    #=> selectable apps for this tier
                         app_name_1/
                             application/    
-                                classes/        #=> controllers, models
+                                classes/    #=> controllers, models
                                 ...
                             modules/        #=> app modules (all are loaded, suffix with .off to disable)
                                 auth.off/
@@ -90,7 +90,7 @@ Directory structure for applications follows the convention of Kohana MVC applic
 
     WORDPRESS_SITE/                         #=> ABSPATH
         wp-content/                         #=> WP_CONTENT_DIR
-            kohana/                         #=> KOHANA_ABSPATH
+            kohana/                         #=> KOHANA_APPS_ROOT
                 sites/                      
                     all/                    
                         app_name_1/         #=> DOCROOT

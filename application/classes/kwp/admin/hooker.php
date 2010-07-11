@@ -1,5 +1,8 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
+require 'pageoptions.php';
+
+
 /**
  * Created by PhpStorm.
  * User: mgutz
@@ -36,7 +39,7 @@ class KWP_Admin_Hooker {
 	 * @return
 	 */
 	static function show_admin_items() {
-		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "Kohana", "KWP_Admin_Hooker::show_control_panel");
+		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "kohana-wp", "KWP_Admin_Hooker::show_control_panel");
 		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'KWP_Admin_Hooker::show_page_options', 'page', 'advanced' );
 	}
 
@@ -53,7 +56,6 @@ class KWP_Admin_Hooker {
 	}
 
 	static function page_options() {
-		include_once 'page_options.php';
 		return new KWP_Admin_PageOptions();
 	}
 
@@ -62,7 +64,7 @@ class KWP_Admin_Hooker {
 	 * @return
 	 */
 	static function show_control_panel() {
-		include_once 'control_panel.php';
+		echo kohana('kohana-wp/controlpanel/index');
 	}
 }
  

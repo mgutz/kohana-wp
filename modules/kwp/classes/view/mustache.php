@@ -41,23 +41,56 @@ class View_Mustache extends Kohana_View {
 	 * @return  string
 	 */
 	protected static function capture($kohana_view_filename, array $kohana_view_data) {
-		return self::mustache($kohana_view_filename, $kohana_view_data, View::$_global_data);
+		return self::mustache_auto_class($kohana_view_filename, $kohana_view_data, View::$_global_data);
 	}
 
+
+	/**
+	 * @static
+	 * @param  mixed $template_paths
+	 * @param  object $context
+	 * @param  object $locals
+	 * @return string
+	 */
+	static function mustache($template_paths, $context, $locals = NULL) {
+		return self::mustache_auto_class($template_paths, $context, $locals, $pipe_key = 'content', false);
+	}
 
 	/**
 	 * Renders a Mustache template. Will instantiate a code-behind class of the same name if it exists in the
 	 * same directory.
 	 *
 	 * @throws Kohana_Exception
-	 * @param  string $template_path
+	 * @param  mixed $template_path
 	 * @param  stdClass $context
 	 * @param  array $locals
 	 * @return string
 	 */
-	static function mustache($template_path, $context, $locals = NULL) {
-		$class = self::new_code_behind_class($template_path);
+	static function mustache_auto_class($template_paths, $context, $locals = NULL, $pipe_key = 'content', $auto_class = true) {
+		if (is_string($template_paths)) {
+			$template_paths = array($template_paths);
+		}
 
+		$new_context = new stdClass();
+		foreach ($context as $key => $value) {
+			$new_context->$key = $value;
+		}
+		
+		foreach ($template_paths as $template_path) {
+			if ($auto_class)
+				$class = self::new_code_behind_class($template_path);
+			else
+				$class = new stdClass();
+
+			$output = self::mustache_class($class, $template_path, $new_context, $locals);
+			$new_context = $class;
+			$new_context->$pipe_key = $output;
+		}
+
+		return $output;
+	}
+
+	private static function mustache_class($class, $template_path, $context, $locals) {
 		// assign/override from instance variables of context
 		foreach ($context as $key => $value) {
 			if ($key != 'request') {

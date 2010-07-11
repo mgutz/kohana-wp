@@ -1,0 +1,71 @@
+<style type="text/css">
+    #navmenu {
+        padding: 4px 0 4px 0;
+        border-bottom: solid thin #CCCCCC;
+    }
+
+    #navmenu ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        list-style-image: none;
+    }
+
+    #navmenu li {
+        margin: 4px;
+        display: inline;
+        border-top: solid thin #CCCCCC;
+        border-left: solid thin #CCCCCC;
+        border-right: solid thin #CCCCCC;
+        padding: 5px 0 5px 0;
+
+    }
+
+    #navmenu ul li a {
+        text-decoration: none;
+        margin: 0px;
+        padding: 5px 25px 5px 25px;
+        background: #EEEEEE;
+    }
+
+    #navmenu ul li a:hover {
+        background: #FFFFFF;
+    }
+
+    #navmenu .active {
+        text-decoration: none;
+        margin: 0;
+        padding: 5px 25px 5px 25px;
+        background: #FFFFFF;
+    }
+</style>
+
+<div class="wrap">
+    <div class="wrap nosubsub">
+       <div id="icon-edit-pages" class="icon32"><br /></div>
+
+        <h2>Kohana-WP Control Panel</h2>
+
+        <p>
+            The Kohana for Wordpress Module allows you to add pages and applications built with the Kohana PHP framework to
+            your Wordpress site. To learn more about Kohana see <a href="http://kohanaphp.com/">http://kohanaphp.com</a>
+        </p>
+
+        <br class="clear" />
+
+        <div id="navmenu">
+            <ul>
+                <li>
+                    {{#options_active}}<a class="active" href="#">Kohana Options</a>{{/options_active}}
+                    {{^options_active}}<a class='' href="{{& controller_url}}/index">Kohana Options</a>{{/options_active}}
+                </li>
+                <li>
+                    {{#routes_active}}<a class="active" href="#">Page Routing</a>{{/routes_active}}
+                    {{^routes_active}}<a class='' href="{{& controller_url}}/routes">Page Routing</a>{{/routes_active}}
+                </li>
+            </ul>
+        </div>
+        
+        {{& content}}
+    </div>
+</div>

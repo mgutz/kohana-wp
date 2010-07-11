@@ -1,6 +1,5 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
-require_once 'request.php';
 require_once 'filter.php';
 require_once 'widget.php';
 
@@ -34,59 +33,3 @@ class KWP_NonAdmin_Hooker {
 }
 
 
-/**
- * Executes a kohana route.
- * 
- * @example echo kohana('pizza_shop/order')
- * @param string $url_segment	Kohana URL segment in this format: app/controller(/index(arg0/.../argn))
- * @return string The result of executing the route.
- */
-function kohana($route) {
-	$result = KWP_NonAdmin_Request::execute_route($route);
-	return is_string($result) ? $result : $result->response;
-}
-
-
-/**
- * This is a replication of the Kohana magic function for i18n translations.
- * For use in application/views if you're leaving Wordpress i10n class to handle translations.
- *
- * Currently by default a site running this plugin will use Wordpress' i10n
- * class and the wordpress __() method for language translation.
- *
- * @param string $string
- * @param array $values
- * @return string
- */
-function __k($string, array $values = NULL, $lang = 'en-us') {
-	if ($lang !== I18n::$lang) {
-		// The message and target languages are different
-		// Get the translation for this message
-		$string = I18n::get($string);
-	}
-
-	return empty($values) ? $string : strtr($string, $values);
-}
-
-
-/**
- * Enable Kohana translations to be default.
- * Comment out the method __() in wp-includes/i10n.php
- */
-if (!function_exists('__')) {
-	function __($string, $values = NULL, $lang = 'en-us') {
-		if (!is_array($values)) {
-			$temp = $values;
-			$values = array();
-			$values[] = $temp;
-		}
-
-		if ($lang !== I18n::$lang) {
-			// The message and target languages are different
-			// Get the translation for this message
-			$string = I18n::get($string);
-		}
-
-		return empty($values) ? $string : strtr($string, $values);
-	}
-}

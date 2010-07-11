@@ -5,4 +5,5 @@
 *.swo
 *.swp 
 .*.swp
-logs/
+**/logs/2???
+!.gitkeep

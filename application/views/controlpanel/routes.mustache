@@ -1,0 +1,45 @@
+<div id="kohana_routes_tab">
+    <h3>Kohana Page Routes</h3>
+
+    <table class="widefat tag fixed" cellspacing="0">
+        <thead>
+        <tr>
+            <th scope="col" id="name" class="manage-column column-description">Kohana Content</th>
+            <th scope="col" id="slug" class="manage-column column-description">WordPress Page</th>
+            <th scope="col" id="posts" class="manage-column column-posts num">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody id="the-list" class="list:tag">
+        {{#routes}}
+            <tr id="cat-1" class="iedit alternate">
+                <td class="description column-description">{{route}}</td>
+                <td class="description column-description">{{post_title}}</td>
+                <td class="slug column-slug">
+                    {{& edit_link}} | <a href="javascript:delete_route({{post_id}})">delete</a>
+                </td>
+            </tr>
+        {{/routes}}
+        </tbody>
+    </table>
+
+    <br class="clear"/>
+
+    <script type="text/javascript">
+        function delete_route(post_id) {
+            document.getElementById('route_post_id').value = post_id;
+            document.getElementById('delete_route_form').submit();
+        }
+    </script>
+
+    <form id="delete_route_form" action="{{& controller_url}}/delete_route" method="post">
+        <input name="action" id="action" value="delete_page_routing" type="hidden" />
+        <input name="route_post_id" id="route_post_id" value="" type="hidden" />
+    </form>
+
+    <div class="form-wrap">
+        <p>
+            Route entries are added by editing a Page through the Pages menu on the left hand side. Look for
+            <b>Kohana-WP Integration</b> box.
+        </p>
+    </div>
+</div>

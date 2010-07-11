@@ -1,6 +1,12 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
-class KohanaBootstrapper {
+class KWP_Bootstrapper {
+    static function boot($docroot, $app_dir = 'application', $mod_dir = 'modules', $sys_dir = 'system') {
+        $strapper = new KWP_Bootstrapper();
+        $strapper->index($docroot, $app_dir, $mod_dir, $sys_dir);
+        $strapper->bootstrap();
+    }
+    
 	/**
 	 * recreate Kohana 3.0 index.php file with some modifications
 	 */
@@ -123,6 +129,18 @@ class KohanaBootstrapper {
 		}
 	}
 
+
+
+	# TODO: Should bootstrap path be unique to application?
+	#$custom_bootstrap = get_option('kwp_bootstrap_path');
+	#if ($custom_bootstrap !== false) {
+	#	include_once $custom_bootstrap;
+	#} else {
+	#	$kohana->bootstrap();
+	#}
+
+
+
 	/**
 	 * Recreate the Kohana application/bootstrap.php process with some modifications
 	 *
@@ -220,7 +238,7 @@ class KohanaBootstrapper {
 		 * Set the routes. Each route must have a minimum of a name, a URI and a set of
 		 * defaults for the URI.
 		 */
-		Route::set('default', '(<controller>(/<action>(/<id>)))')
+		Route::set('default', '(<app>/<controller>(/<action>(/<id>)))')
 			->defaults(array(
 				'controller' => 'welcome',
 				'action'     => 'index',
@@ -281,6 +299,3 @@ class KohanaBootstrapper {
 		return $dirs;
 	}
 }
-
-
-

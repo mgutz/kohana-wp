@@ -1,0 +1,66 @@
+<div id="kohana_options_tab">
+    <h3>Kohana Options</h3>
+
+    <div>
+        <p>Kohana Front Loader: <a href="{{front_loader}}">{{front_loader}}</a></p>
+        <p>Kohana Applications Root: {{kohana_apps_root}}</p>
+    </div>
+
+    <div class="form-wrap">
+        <form name="addmap" id="addmap" method="post" action="options.php" class="add:the-list: validate">
+            {{& nonce_field}}
+
+            <div class="form-field form-required">
+                <label for="kwp_default_placement"><strong>Default Placement</strong></label>
+                {{& result_placement_dropdown}}
+
+                <p>
+                    Define if your want the results of Kohana controller requests to replace wordpress content or display
+                    before or after WordPress content.
+                </p>
+            </div>
+
+        {{#has_page_templates}}
+            <div class="form-field">
+                <label for="kwp_page_template"><strong>Kohana Page Template</strong></label>
+                <select name="kwp_page_template" id="kwp_page_template">
+                    <option value='default'>Default Template</option>
+                    {{page_template_combobox}}
+                </select>
+
+                <p> 
+                    If your theme has custom templates, you can select one to be used for all Kohana requests.
+                    This will override templates assigned to any mapped pages.
+                </p>
+            </div>
+        {{/has_page_templates}}
+
+            <div class="form-field form-required">
+            <label for="name"><strong>Include Kohana Front Loader in Wordpress Navigation</strong></label>
+            <input type="checkbox" name="kwp_front_loader_in_nav" value="1" {{front_loader_in_nav_checked}} />
+            <p>Kohana module creates a WordPress page when installed. This page basically becomes your kohana front
+                loader. Select the checkbox if you want this page to appear in your WordPress navigation. You can edit the
+                details of this page
+                <a href="{{&edit_front_loader_url}}">here</a>.
+            </p>
+            </div>
+
+            <div class="form-field form-required">
+            <label for="name"><strong>Process all URIs</strong></label>
+            <input type="checkbox" name="kwp_process_all_uri" value="1"  {{process_all_uri_checked}}  />
+            <p>If you turn this setting off then the plugin will only attempt to process Kohana controllers if requested
+                from front loader page. If you turn this setting on
+                then the plugin will check for a valid Kohana controller for every request that isn't for a specific
+                wordpress page or post.</p>
+            </div>
+
+            <p class="submit"><input class="button" name="submit" value="Update Kohana Options" type="submit"></p>
+
+
+            <input type="hidden" name="action" value="update"/>
+            <input type="hidden" name="page_options"
+                value="kwp_default_time_zone,kwp_front_loader_in_nav,kwp_process_all_uri,kwp_default_placement,kwp_page_template"/>
+        </form>
+    </div>
+    <br class="clear"/>
+</div>

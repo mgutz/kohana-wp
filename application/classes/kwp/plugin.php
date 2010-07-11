@@ -1,9 +1,15 @@
 <?php
 
+require 'request.php';
+
 /**
  * Encapsulate Kohana-WP in a class to avoid any conflicts.
  */
 class KWP_Plugin {
+
+	static function factory() {
+		return new KWP_Plugin();
+	}
 
 	/**
 	 * Define constants and variables.
@@ -11,11 +17,16 @@ class KWP_Plugin {
 	 * @static
 	 * @return void
 	 */
-	function define_constants() {
+	function __construct() {
 		define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
 
+		define('KWP_IN_ADMIN', strpos($_SERVER['REQUEST_URI'], 'wp-admin/') !== false);
+
 		// Directory containing MVC framework, modules and site applications. (not the plugin root)
-		define('KOHANA_ABSPATH', WP_CONTENT_DIR . '/kohana/');
+		if (KWP_IN_ADMIN)
+			define('KOHANA_APPS_ROOT', WP_PLUGIN_DIR.'/');
+		else
+			define('KOHANA_APPS_ROOT', WP_CONTENT_DIR . '/kohana/sites/all/');
 
 		// Meta key for route.
 		define('KWP_ROUTE', '_kwp_route');
@@ -117,13 +128,10 @@ class KWP_Plugin {
 	 * @return void
 	 */
 	function run() {
-		$this->define_constants();
-
-		$is_in_admin = (strpos($_SERVER['REQUEST_URI'], 'wp-admin/'));
-		if ($is_in_admin) {
+		if (KWP_IN_ADMIN) {
 			register_deactivation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::deactivate');
 			register_activation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::activate');
-			include_once 'admin/hooker.php';
+            include_once 'admin/hooker.php';
 			$admin = new KWP_Admin_Hooker();
 			$admin->register_hooks();
 		}
@@ -132,5 +140,73 @@ class KWP_Plugin {
 			$non_admin = new KWP_NonAdmin_Hooker();
 			$non_admin->register_hooks();
 		}
+	}
+}
+
+/**
+ * Executes a kohana route. Checks if there is a new route on the query string. Will execute the
+ * new route unless $force is set to true. New routes are set by views of the original $route to
+ * new actions.
+ *
+ * @example echo kohana('pizza_shop/order')
+ * @param string $route	Kohana route in this format: app/controller(/index(arg0/.../argn))
+ * @param bool $force Force use of the route, do not use newer routes.
+ * @return string The result of executing the route.
+ */
+function kohana($route, $force = false) {
+	// see if there is an internal kr request on the URL (created by one of the views)
+	if (!$force)
+		$new_route = KWP_Request::parse_request();
+
+	if (empty($new_route)) {
+		$new_route = $route;
+	}
+
+	$result = KWP_Request::execute_route($new_route);
+	return is_string($result) ? $result : $result->response;
+}
+
+
+/**
+ * This is a replication of the Kohana magic function for i18n translations.
+ * For use in application/views if you're leaving Wordpress i10n class to handle translations.
+ *
+ * Currently by default a site running this plugin will use Wordpress' i10n
+ * class and the wordpress __() method for language translation.
+ *
+ * @param string $string
+ * @param array $values
+ * @return string
+ */
+function __k($string, array $values = NULL, $lang = 'en-us') {
+	if ($lang !== I18n::$lang) {
+		// The message and target languages are different
+		// Get the translation for this message
+		$string = I18n::get($string);
+	}
+
+	return empty($values) ? $string : strtr($string, $values);
+}
+
+
+/**
+ * Enable Kohana translations to be default.
+ * Comment out the method __() in wp-includes/i10n.php
+ */
+if (!function_exists('__')) {
+	function __($string, $values = NULL, $lang = 'en-us') {
+		if (!is_array($values)) {
+			$temp = $values;
+			$values = array();
+			$values[] = $temp;
+		}
+
+		if ($lang !== I18n::$lang) {
+			// The message and target languages are different
+			// Get the translation for this message
+			$string = I18n::get($string);
+		}
+
+		return empty($values) ? $string : strtr($string, $values);
 	}
 }
