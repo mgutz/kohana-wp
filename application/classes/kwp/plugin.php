@@ -1,6 +1,10 @@
 <?php
 
+define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
+
 require 'request.php';
+require 'bootstrapper.php';
+
 
 /**
  * Encapsulate Kohana-WP in a class to avoid any conflicts.
@@ -18,8 +22,6 @@ class KWP_Plugin {
 	 * @return void
 	 */
 	function __construct() {
-		define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
-
 		define('KWP_IN_ADMIN', strpos($_SERVER['REQUEST_URI'], 'wp-admin/') !== false);
 
 		// Directory containing MVC framework, modules and site applications. (not the plugin root)
@@ -129,10 +131,13 @@ class KWP_Plugin {
 	 */
 	function run() {
 		if (KWP_IN_ADMIN) {
+			// admin has known fixed system and applciation, so boot early to take advantage of autoload
+			// this loads basic Kohana system
+			KWP_Bootstrapper::boot('kohana-wp/controlpanel/index');
+
 			register_deactivation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::deactivate');
 			register_activation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::activate');
-            include_once 'admin/hooker.php';
-			$admin = new KWP_Admin_Hooker();
+			$admin = new KWP_Admin();
 			$admin->register_hooks();
 		}
 		else {

@@ -7,40 +7,6 @@ class Controller_KWP extends Kohana_Controller {
 	public $app_url = KWP_APP_URL;
 	public $controller_url = KWP_CONTROLLER_URL;
 	public $page_url = KWP_PAGE_URL;
-	public $public_url = KWP_PUBLIC_URL;
-
-
-	/**
-	 * Renders an array of templates. Each template is processed then assigned as $content
-	 * for next template.
-	 *  
-	 * @param  $templates List of template processed left to right.
-	 * @param string $as_key The name of the variable to assign.
-	 * @return void
-	 */
-	function render_pipe_text($templates, $locals = NULL, $as_key='content') {
-		if (empty($locals)) {
-			$locals = array();
-		}
-
-		$last = NULL;
-		foreach ($templates as $template) {
-			if (isset($last)) {
-				$locals[$as_key] = $last;
-			}
-			$last = $this->render_text($template, $locals);
-		}
-		
-		if (count($templates) > 1) {
-			$last = $this->render_text($template, $locals);
-		}
-
-		return $last;
-	}
-
-	function render_pipe($templates, $locals = NULL, $as_key='content') {
-		$this->request->response = $this->render_pipe_text($templates, $locals, $as_key);
-	}
 
 	/**
 	 * Renders a Mustache template and assigns it to the response stream.
@@ -64,8 +30,7 @@ class Controller_KWP extends Kohana_Controller {
 	 * @param array $locals Local variables.
 	 * @return string
 	 */
-	function render_text($template_path, $locals = NULL) {
-
+	function render_text($template_paths, $locals = NULL) {
 		foreach (array($this, $locals) as $arr) {
 			if (empty($arr)) continue;
 			
@@ -75,6 +40,42 @@ class Controller_KWP extends Kohana_Controller {
 				}
 			}
 		}
-		return (string) View::factory($template_path, $context);
+		return (string) View::factory($template_paths, $context);
 	}
+	
+
+//	/**
+//	 * TODO: Adding a layout likes this breaks how Kohana works with views. The rendering pipeline
+//	 * needs to happen here as well, othwerise different view engines will not work.
+//	 *
+//	 * Appends the layout to an array. If $templates is a string, it is converted into an array.
+//	 * @param  $templates
+//	 * @return array
+//	 */
+//	private function append_layout($templates) {
+//		if (is_string($templates)) {
+//			$templates = array($templates);
+//		}
+//
+//		if (empty($this->_layout))
+//			return $templates;
+//
+//		// verify it does not exist
+//		foreach ($templates as $t) {
+//			if (strcasecmp($this->_layout, $t) == 0) {
+//				return $templates;
+//			}
+//		}
+//
+//		$templates[] = $this->_layout;
+//
+//		return $templates;
+//	}
+//
+//	private $_layout = "";
+//
+//	protected function set_layout($layout) {
+//		$_layout = $layout;
+//	}
+	
 }

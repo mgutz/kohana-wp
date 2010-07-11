@@ -1,8 +1,5 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
-require 'pageoptions.php';
-
-
 /**
  * Created by PhpStorm.
  * User: mgutz
@@ -11,11 +8,12 @@ require 'pageoptions.php';
  * To change this template use File | Settings | File Templates.
  */
 
-class KWP_Admin_Hooker {
+
+class KWP_Admin {
 	function register_hooks() {
-		add_action('admin_menu', 'KWP_Admin_Hooker::show_admin_items');
-		add_filter('plugin_row_meta', 'KWP_Admin_Hooker::plugin_row_meta', 10, 2);
-		add_action('save_post', 'KWP_Admin_Hooker::save_page_options');
+		add_action('admin_menu', 'KWP_Admin::show_admin_items');
+		add_filter('plugin_row_meta', 'KWP_Admin::plugin_row_meta', 10, 2);
+		add_action('save_post', 'Controller_PageOptions::update');
 	}
 
 	/**
@@ -40,23 +38,7 @@ class KWP_Admin_Hooker {
 	 */
 	static function show_admin_items() {
 		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "kohana-wp", "KWP_Admin_Hooker::show_control_panel");
-		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'KWP_Admin_Hooker::show_page_options', 'page', 'advanced' );
-	}
-
-
-	/**
-	 * Adds a custom section Page edit screens titled "Kohana-WP Integration".
-	 */
-	static function show_page_options() {
-		self::page_options()->show();
-	}
-
-	static function save_page_options($post_id) {
-		self::page_options()->save($post_id);
-	}
-
-	static function page_options() {
-		return new KWP_Admin_PageOptions();
+		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'Controller_PageOptions::index', 'page', 'advanced' );
 	}
 
 	/**

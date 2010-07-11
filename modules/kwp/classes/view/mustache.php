@@ -52,7 +52,7 @@ class View_Mustache extends Kohana_View {
 	 * @param  object $locals
 	 * @return string
 	 */
-	static function mustache($template_paths, $context, $locals = NULL) {
+	static function mustache($template_paths, $context = NULL, $locals = NULL) {
 		return self::mustache_auto_class($template_paths, $context, $locals, $pipe_key = 'content', false);
 	}
 
@@ -66,16 +66,18 @@ class View_Mustache extends Kohana_View {
 	 * @param  array $locals
 	 * @return string
 	 */
-	static function mustache_auto_class($template_paths, $context, $locals = NULL, $pipe_key = 'content', $auto_class = true) {
+	static function mustache_auto_class($template_paths, $context = NULL, $locals = NULL, $pipe_key = 'content', $auto_class = true) {
 		if (is_string($template_paths)) {
 			$template_paths = array($template_paths);
 		}
 
 		$new_context = new stdClass();
-		foreach ($context as $key => $value) {
-			$new_context->$key = $value;
+		if (isset($context)) {
+			foreach ($context as $key => $value) {
+				$new_context->$key = $value;
+			}
 		}
-		
+
 		foreach ($template_paths as $template_path) {
 			if ($auto_class)
 				$class = self::new_code_behind_class($template_path);

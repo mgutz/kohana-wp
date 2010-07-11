@@ -4,9 +4,6 @@
  * Kohana request processor.
  */
 class KWP_Request {
-
-
-	
 	/**
 	 * Checks if a Kohana request is in progress.
 	 * Must be called after kohana_request_filter has been triggered.
@@ -188,63 +185,14 @@ class KWP_Request {
 			return '';
 		}
 
-		$app_root = self::app_specific_setup($route);
-		self::load_kohana($app_root);
-
+		KWP_Bootstrapper::boot($route);
 		list($app, $kohana_route) = explode('/', $route, 2);
 		$result = Request::factory($route)->execute();
 
 		return $result;
 	}
 
-	static function page_url() {
-		$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-		if ($_SERVER["SERVER_PORT"] != "80") {
-			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-		}
-		else {
-			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-		}
-		return $pageURL;
-	}
 
-	private static function app_specific_setup($route) {
-		// [0] = application namespace
-		// [1] = controller/action/arg0/.../argn
-		list($app_name, $controller, $rest) = explode('/', $route, 3);
-
-		$app_root = KOHANA_APPS_ROOT . $app_name;
-		$controller_path = "$app_root/application/classes/controller/$controller.php";
-		if (!is_file($controller_path)) {
-			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
-		}
-
-		// define constants for URL helpers
-		$page_url = self::page_url();
-		
-		// get rid of existing kr since we will be rebuilding it (will keep appending otherwise)
-		$page_url = preg_replace('/(&|\?)kr=.*/i', '', $page_url);
-
-		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
-		define('KWP_PAGE_URL', $page_url . $prefix);
-		define('KWP_APP_URL', KWP_PAGE_URL . $app_name);
-		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
-		
-		return $app_root;
-	}
-
-	private static function load_kohana($docroot) {
-		// use Kohana-WP's default system if application does not provide it
-		if (is_file($docroot.'/system/classes/kohana/core.php')) {
-			$system = 'system';
-		} 
-		else {
-			$system = KWP_DOCROOT.'system';
-		}
-
-		require_once 'bootstrapper.php';
-		KWP_Bootstrapper::boot($docroot, 'application', 'modules', $system);
-	}
 
 
 	/**

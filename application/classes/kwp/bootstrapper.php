@@ -1,16 +1,66 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
-class KWP_Bootstrapper {
-    static function boot($docroot, $app_dir = 'application', $mod_dir = 'modules', $sys_dir = 'system') {
-        $strapper = new KWP_Bootstrapper();
-        $strapper->index($docroot, $app_dir, $mod_dir, $sys_dir);
-        $strapper->bootstrap();
-    }
-    
+final class KWP_Bootstrapper {
+
+	/**
+	 * Bootstraps Kohana system from a route.
+	 * @static
+	 * @param  $route application/controller(/action(/args(...(/argn)))
+	 * @return void
+	 */
+	static function boot($route) {
+		static $bootstrapped = false;
+		
+		if ($bootstrapped) return;
+
+		$bootstrapped = true;
+		$strapper = new KWP_Bootstrapper();
+		$app_root = $strapper->app_specific_setup($route);
+		$strapper->load_kohana($app_root);
+	}
+
+
+
+	private function app_specific_setup($route) {
+		list($app_name, $controller, $rest) = explode('/', $route, 3);
+
+		$app_root = KOHANA_APPS_ROOT . $app_name;
+		$controller_path = "$app_root/application/classes/controller/$controller.php";
+		if (!is_file($controller_path)) {
+			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
+		}
+ 
+		// define constants for URL helpers
+		$page_url = $this->page_url();
+
+		// get rid of existing kr since any outgoing URL will be rebuilt (will keep appending otherwise)
+		$page_url = preg_replace('/(&|\?)kr=.*/i', '', $page_url);
+
+		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
+		define('KWP_PAGE_URL', $page_url . $prefix);
+		define('KWP_APP_URL', KWP_PAGE_URL . $app_name);
+		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
+
+		return $app_root;
+	}
+
+	private function load_kohana($docroot) {
+		// use Kohana-WP's default system if application does not provide it
+		if (is_file($docroot.'/system/classes/kohana/core.php')) {
+			$system = 'system';
+		}
+		else {
+			$system = KWP_DOCROOT.'system';
+		}
+
+		$this->index($docroot, 'application', 'modules', $system);
+		$this->bootstrap();
+	}
+
 	/**
 	 * recreate Kohana 3.0 index.php file with some modifications
 	 */
-	function index($docroot, $app_dir = 'application', $mod_dir = 'modules', $sys_dir = 'system') {
+	private function index($docroot, $app_dir = 'application', $mod_dir = 'modules', $sys_dir = 'system') {
 		/**
 		 * The directory in which your application specific resources are located.
 		 * The application directory must contain the bootstrap.php file.
@@ -147,7 +197,7 @@ class KWP_Bootstrapper {
 	 * @static
 	 * @return void
 	 */
-	function bootstrap() {
+	private function bootstrap() {
 		//-- Environment setup --------------------------------------------------------
 
 		/**
@@ -261,7 +311,7 @@ class KWP_Bootstrapper {
 	 * All modules located inside an applications modules/ folder are registered unless the module module
 	 * directory is suffixed with '.off'.
 	 */
-	function get_combined_modules($dirs) {
+	private function get_combined_modules($dirs) {
 		foreach ($dirs as $dir) {
 			$mod = $this->get_dir_names($dir);
 			foreach ($mod as $name => $path) {
@@ -279,7 +329,7 @@ class KWP_Bootstrapper {
 	 * @param  $path The path.
 	 * @return array
 	 */
-	function get_dir_names($path) {
+	private function get_dir_names($path) {
 		$dirs = array();
 		if (is_dir($path)) {
 			if ($handle = opendir($path)) {
@@ -298,4 +348,16 @@ class KWP_Bootstrapper {
 		
 		return $dirs;
 	}
+
+	private function page_url() {
+		$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+		if ($_SERVER["SERVER_PORT"] != "80") {
+			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		}
+		else {
+			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		}
+		return $pageURL;
+	}
+
 }

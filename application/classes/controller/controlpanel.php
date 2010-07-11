@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mgutz
- * Date: Jul 10, 2010
- * Time: 1:49:09 AM
- * To change this template use File | Settings | File Templates.
- */
- 
-class Controller_ControlPanel extends Controller {
 
+class Controller_ControlPanel extends Controller {
 	function action_index() {
 	    $this->render(array('controlpanel/options', 'layout/controlpanel'));
 	}
@@ -19,6 +11,7 @@ class Controller_ControlPanel extends Controller {
 
 	function action_delete_route() {
 		$this->delete_route($_POST['route_post_id']);
+		
 		$this->action_routes();
 	}
 
@@ -33,5 +26,16 @@ class Controller_ControlPanel extends Controller {
 SQL;
 		global $wpdb;
 		$wpdb->query($wpdb->prepare($sql, $post_id));
+	}
+
+	/**
+	 * Sets the flash message in WordPress.
+	 * 
+	 * @param  $message
+	 * @return void
+	 */
+	function set_flash($message) {
+		add_settings_error('general', 'settings_updated', __('Settings saved.'), 'updated');
+		set_transient('settings_errors', get_settings_errors(), 30);
 	}
 }
