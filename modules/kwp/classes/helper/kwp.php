@@ -1,6 +1,7 @@
 <?php
 
 class Helper_KWP {
+	
 	/**
 	 * Converts a literal array, into an object array.
 	 *

@@ -1,3 +1,4 @@
 <?php
 
-class Kwp extends Helper_KWP {}
+class Kwp extends Helper_KWP {
+}

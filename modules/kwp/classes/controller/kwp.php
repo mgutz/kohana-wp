@@ -1,12 +1,15 @@
 <?php
 
 class Controller_KWP extends Kohana_Controller {
-	/**
-	 * URL paths compatible with WordPress. Must be used for applications to work correctly in WordPress.
-	 */
-	public $app_url = KWP_APP_URL;
-	public $controller_url = KWP_CONTROLLER_URL;
-	public $page_url = KWP_PAGE_URL;
+
+	function __construct(Kohana_Request $request) {
+		parent::__construct($request);
+
+  	 	// URL paths compatible with WordPress. Must be used for applications to work correctly in WordPress.
+		$this->app_url = Kwp_Plugin::globals('current_app_url');
+		$this->controller_url = Kwp_Plugin::globals('current_controller_url');
+		$this->page_url = Kwp_Plugin::globals('current_page_url');
+	}
 
 	/**
 	 * Renders a Mustache template and assigns it to the response stream.

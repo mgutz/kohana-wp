@@ -1,5 +1,6 @@
 <?php defined('KWP_DOCROOT') or die('No direct script access.');
 
+
 final class KWP_Bootstrapper {
 
 	/**
@@ -9,26 +10,33 @@ final class KWP_Bootstrapper {
 	 * @return void
 	 */
 	static function boot($route) {
-		static $bootstrapped = false;
-		
-		if ($bootstrapped) return;
+		static $last_app = "";
+		list($app, $controller) = explode('/', $route, 2);
 
-		$bootstrapped = true;
 		$strapper = new KWP_Bootstrapper();
-		$app_root = $strapper->app_specific_setup($route);
+		$app_root = $strapper->route_specific_constants($route);
+
+		// no need to reload if using the same app
+		if ($last_app == $app)
+			return;
+		$last_app = $app;
+
 		$strapper->load_kohana($app_root);
 	}
 
 
 
-	private function app_specific_setup($route) {
-		list($app_name, $controller, $rest) = explode('/', $route, 3);
+	private function route_specific_constants($route) {
+		list($app_name, $controller, $action, $rest) = explode('/', $route, 4);
 
 		$app_root = KOHANA_APPS_ROOT . $app_name;
 		$controller_path = "$app_root/application/classes/controller/$controller.php";
 		if (!is_file($controller_path)) {
 			return "<span style='color:red; font-weight:bold'>Invalid Kohana route:<br />route => <code>$app/$controller</code><br/>path not found => $controller_path<code></code> </span>";
 		}
+
+		KWP_Plugin::set_global('current_controller', $controller);
+		KWP_Plugin::set_global('current_action', empty($action) ? 'index' : $action);
  
 		// define constants for URL helpers
 		$page_url = $this->page_url();
@@ -37,9 +45,9 @@ final class KWP_Bootstrapper {
 		$page_url = preg_replace('/(&|\?)kr=.*/i', '', $page_url);
 
 		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';
-		define('KWP_PAGE_URL', $page_url . $prefix);
-		define('KWP_APP_URL', KWP_PAGE_URL . $app_name);
-		define('KWP_CONTROLLER_URL', KWP_APP_URL . '/' . $controller);
+		KWP_Plugin::set_global('current_page_url', $page_url . $prefix);
+		KWP_Plugin::set_global('current_app_url', $page_url . $prefix . $app_name);
+		KWP_Plugin::set_global('current_controller_url', $page_url . $prefix . $app_name . "/$controller");
 
 		return $app_root;
 	}

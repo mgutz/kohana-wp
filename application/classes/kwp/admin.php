@@ -12,7 +12,7 @@
 class KWP_Admin {
 	function register_hooks() {
 		add_action('admin_menu', 'KWP_Admin::show_admin_items');
-		add_filter('plugin_row_meta', 'KWP_Admin::plugin_row_meta', 10, 2);
+		//add_filter('plugin_row_meta', 'KWP_Admin::plugin_row_meta', 10, 2);
 		add_action('save_post', 'Controller_PageOptions::update');
 	}
 
@@ -37,7 +37,7 @@ class KWP_Admin {
 	 * @return
 	 */
 	static function show_admin_items() {
-		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "kohana-wp", "KWP_Admin_Hooker::show_control_panel");
+		add_options_page("Kohana-WP", "Kohana-WP", 'manage_options', "kohana-wp", "KWP_Admin::show_control_panel");
 		add_meta_box('kwp_routing', __( 'Kohana-WP Integration', KWP_DOMAIN), 'Controller_PageOptions::index', 'page', 'advanced' );
 	}
 

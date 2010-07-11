@@ -1,6 +1,12 @@
 <?php
 
 class Controller_ControlPanel extends Controller {
+	// add other tabs here and they will show as a tab in control panel
+	public $tab_pages = array(
+		array('caption' => 'General Settings', 'action' => 'index'),
+		array('caption' => 'Page Routing', 'action' => 'routes')
+	);
+
 	function action_index() {
 	    $this->render(array('controlpanel/options', 'layout/controlpanel'));
 	}

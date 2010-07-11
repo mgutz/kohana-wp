@@ -1,5 +1,9 @@
 <?php
 
+// WP relaods this plugin many times on first page of admin
+if (substr($_SERVER['REQUEST_URI'], -strlen('wp-admin')) == '/wp-admin/')
+	return;
+
 define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
 
 require 'request.php';
@@ -10,6 +14,15 @@ require 'bootstrapper.php';
  * Encapsulate Kohana-WP in a class to avoid any conflicts.
  */
 class KWP_Plugin {
+	private static $_globals = array();
+
+	static function set_global($key, $value) {
+		self::$_globals[$key] = $value;
+	}
+	static function globals($key) {
+		return self::$_globals[$key];
+	}
+
 
 	static function factory() {
 		return new KWP_Plugin();
@@ -133,7 +146,7 @@ class KWP_Plugin {
 		if (KWP_IN_ADMIN) {
 			// admin has known fixed system and applciation, so boot early to take advantage of autoload
 			// this loads basic Kohana system
-			KWP_Bootstrapper::boot('kohana-wp/controlpanel/index');
+			KWP_Bootstrapper::boot('kohana-wp/controlpanel/load_only');
 
 			register_deactivation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::deactivate');
 			register_activation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::activate');

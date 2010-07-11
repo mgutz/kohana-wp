@@ -56,14 +56,9 @@
 
         <div id="navmenu">
             <ul>
-                <li>
-                    {{#options_active}}<a class="active" href="#">Kohana Options</a>{{/options_active}}
-                    {{^options_active}}<a class='' href="{{& controller_url}}/index">Kohana Options</a>{{/options_active}}
-                </li>
-                <li>
-                    {{#routes_active}}<a class="active" href="#">Page Routing</a>{{/routes_active}}
-                    {{^routes_active}}<a class='' href="{{& controller_url}}/routes">Page Routing</a>{{/routes_active}}
-                </li>
+                {{#nav_list}}
+                    <li><a class="{{class}}" href="{{&href}}">{{caption}}</a></li>
+                {{/nav_list}}
             </ul>
         </div>
         
