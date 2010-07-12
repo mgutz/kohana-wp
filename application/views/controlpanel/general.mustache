@@ -7,7 +7,7 @@
     </div>
 
     <div class="form-wrap">
-        <form name="addmap" id="addmap" method="post" action="general.php" class="add:the-list: validate">
+        <form name="addmap" id="addmap" method="post" action="{{controller_url}}/update_general">
             {{& nonce_field}}
 
             <div class="form-field form-required">
@@ -25,7 +25,7 @@
                 <label for="kwp_page_template"><strong>Kohana Page Template</strong></label>
                 <select name="kwp_page_template" id="kwp_page_template">
                     <option value='default'>Default Template</option>
-                    {{page_template_combobox}}
+                    {{& page_template_options}}
                 </select>
 
                 <p> 
@@ -54,12 +54,8 @@
                 wordpress page or post.</p>
             </div>
 
-            <p class="submit"><input class="button" name="submit" value="Update Kohana Options" type="submit"></p>
+            <p class="submit"><input class="button" name="submit" value="Update Kohana-WP General Settings" type="submit"></p>
 
-
-            <input type="hidden" name="action" value="update"/>
-            <input type="hidden" name="page_options"
-                value="kwp_default_time_zone,kwp_front_loader_in_nav,kwp_process_all_uri,kwp_default_placement,kwp_page_template"/>
         </form>
     </div>
     <br class="clear"/>

@@ -1,14 +1,44 @@
 <div>
     <h3>Generate</h3>
 
-    <div class="postbox">
-        <h4>Skeleton Application</h4>
-        <p>Generates a simple "Hello, World!" application using Mustache templates.</p>
+    <h4>Skeleton Application</h4>
+
+    <p>Generates a simple "Hello, World!" application using Mustache templates.</p>
+
+    <div class="form-wrap">
         <form action="{{controller_url}}/generate">
-            <p>
-                <label for="app[name]">Name Your Application</label><br/>
-                <input id="app[name]" name="app[name]"></input>
-            </p>
+
+            <div class="form-field">
+                <label for="app__name">Application Name</label>
+                <input id="app__name" name="app[name]"></input>
+
+                <p>The underscored name of the application becomes the new directory name of the application.</p>
+            </div>
+
+            <div class="form-field">
+                <label for="app__test_page">Test Page Name</label>
+                <input id="app__test_page" name="app[test_page]"/>
+
+                <p>
+                    The test page is a WordPress page created to host the new application. The tets page is managed
+                    normally
+                    through the Pages menu. The tes page appears as a link on the front page.
+                </p>
+            </div>
+
+            <div class="form-field">
+                <label for="app__page_template">Page Template</label>
+                <select name="app[page_template]">
+                    <option value='default'>Default Template</option>
+                    {{&page_templates}}
+                </select>
+
+                <p>
+                    The page template to use for the new page. If more screen space is required, use one-column
+                    template.
+                    Custom Page Templates without any header, footer, or sidebar may be easily created.
+                </p>
+            </div>
 
             <p>
                 <input class="button" type="submit" value="Generate Application"/>

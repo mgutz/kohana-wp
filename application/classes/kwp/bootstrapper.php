@@ -5,6 +5,14 @@ final class KWP_Bootstrapper {
 
 	/**
 	 * Bootstraps Kohana system from a route.
+	 *
+	 * There is NECESSARY complexity in bootstrapping Kohana. Applications can have their own modules and system.
+	 * This means Kohana cannot be bootstrapped generically. Unfortunately, Kohana MVC at bootstrap defines constants
+	 * such as APPPATH, MODPATH, SYSPATH which cannot be redefined. This means Kohana-WP cannot take advantage
+	 * of Kohana's features such as autoloading until the Kohana-WP plugin has enough info to bootstrap
+	 * an application. This explains why there are 'require' in some parts of the code. The code is more complex than
+	 * it has to be for a Kohana based application.
+	 *
 	 * @static
 	 * @param  $route application/controller(/action(/args(...(/argn)))
 	 * @return void
@@ -41,7 +49,7 @@ final class KWP_Bootstrapper {
 		// define constants for URL helpers
 		$page_url = $this->page_url();
 
-		// get rid of existing kr since any outgoing URL will be rebuilt (will keep appending otherwise)
+		// get rid of existing kr since any outgoing URL will be rebuilt (multiple appends otherwise)
 		$page_url = preg_replace('/(&|\?)kr=.*/i', '', $page_url);
 
 		$prefix = strpos($page_url, '?') ? '&kr=' : '?kr=';

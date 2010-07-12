@@ -1,14 +1,11 @@
 <?php
 
+
+
 class Controller_ControlPanel extends Controller {
-	// add other tabs here and they will show as a tab in control panel
-	public $tab_pages = array(
-		array('caption' => 'General Settings', 'action' => 'index'),
-		array('caption' => 'Page Routing', 'action' => 'routes'),
-		array('caption' => 'Generator', 'action' => 'generator')
-	);
 
 	function action_index() {
+		$this->model = Model_GeneralSettings::obj()->first();
 	    $this->render(array('controlpanel/general', 'layout/controlpanel'));
 	}
 	
@@ -16,15 +13,19 @@ class Controller_ControlPanel extends Controller {
 	    $this->render(array('controlpanel/routes', 'layout/controlpanel'));
 	}
 	
-	function action_generator() {
-		$this->render(array('controlpanel/generator', 'layout/controlpanel'));
+
+	function action_update_general() {
+		$this->model = Model_GeneralSettings::obj()->create($_POST)->save();
+		$this->add_flash_notice("Setings saved.");
+		$this->render(array('controlpanel/general', 'layout/controlpanel'));
 	}
-	
 
 	function action_delete_route() {
 		$this->delete_route($_POST['route_post_id']);
+		$this->add_flash_notice("Route deleted");
 		$this->action_routes();
 	}
+
 
 	private function delete_route($post_id) {
 		$sql = <<<SQL
@@ -44,8 +45,8 @@ SQL;
 	 * @param  $message
 	 * @return void
 	 */
-	function set_flash($message) {
-		add_settings_error('general', 'settings_updated', __('Settings saved.'), 'updated');
-		set_transient('settings_errors', get_settings_errors(), 30);
+	function add_flash_notice($message, $type = 'updated') {
+		add_settings_error('general', 'settings_updated', __($message), $type);
+		//set_transient('settings_errors', get_settings_errors(), 30);
 	}
 }

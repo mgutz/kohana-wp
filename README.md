@@ -97,7 +97,7 @@ Directory structure for applications follows the convention of Kohana MVC applic
                             application/    #=> APPPATH 
                                 classes/
                             modules/        #=> MODPATH
-                            public/         #=> PUBPATH 
+                            public/
                             system/         #=> SYSPATH
                         ...
                         app_name_2/
@@ -107,7 +107,7 @@ Directory structure for applications follows the convention of Kohana MVC applic
                     application/            #=> KWP_APPPATH
                         classes/
                     modules/                #=> KWP_MODPATH
-                    public/                 #=> KWP_PUBPATH
+                    public/
                     system/                 #=> KWP_SYSPATH
                 
 ## RoadMap

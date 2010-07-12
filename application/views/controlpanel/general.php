@@ -36,30 +36,26 @@ class Views_ControlPanel_General {
 			array( 'before' => 'Before Page Content', 'replace' => 'Replace Page Content', 'after' => 'After Page Content'),
 			$current
 		);
-//		<select id="kwp_default_placement" name="kwp_default_placement">
-//			{{placement_options}}
-//		</select>
-//
-//
-//		<option value="before" {{before_selected}}>Before Page Content</option>
-//		<option value="after" {{after_selected}}>After Page Content</option>
-//		<option value="replace" {{replace_selected}}>Replace Page Content</option>
 	}
 	
 	function has_page_templates() {
 		return 0 != count(get_page_templates());
 	}
 
-	function page_templates_combobox() {
-		return page_template_dropdown(get_option('kwp_page_template'));
+	function page_template_options() {
+		ob_start();
+		page_template_dropdown($this->model->kwp_page_template);
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
 	}
-	
+
 	function process_all_uri_checked() {
-		return (get_option('kwp_process_all_uri')) ? 'checked="true"' : '';
+		return ($this->model->kwp_process_all_uri) ? 'checked="true"' : '';
 	}
 
 	function front_loader_in_nav_checked() {
-		return (get_option('kwp_front_loader_in_nav')) ? 'checked="true"' : '';
+		return ($this->model->kwp_front_loader_in_nav) ? 'checked="true"' : '';
 	}
 
 	function edit_front_loader_url() {
