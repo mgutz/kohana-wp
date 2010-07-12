@@ -146,8 +146,9 @@ class KWP_NonAdmin_Filter {
 		else { // Look for Kohana Routing Option
 			$route = get_post_meta($requested_post_id, KWP_ROUTE, true);
 			if (!empty($route)) {
-				$wp->kohana->request = $route;
-				$wp->kohana->placement = get_post_meta($requested_post_id, KWP_PLACEMENT, true);
+				list($post_route, $post_placement) = explode('||', $route, 2);
+				$wp->kohana->request = $post_route;
+				$wp->kohana->placement = $post_placement;
 
 				// a kohana view may have linked to a controller/action different than the start controller/action
 				// assigned in wp-admin, e.g. a page that hosts a multi-form kohana application

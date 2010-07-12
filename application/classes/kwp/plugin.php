@@ -6,6 +6,7 @@ if (substr($_SERVER['REQUEST_URI'], -strlen('wp-admin')) == '/wp-admin/')
 
 define('KWP_DOCROOT', WP_PLUGIN_DIR . '/kohana-wp/');
 
+require 'registrar.php';
 require 'request.php';
 require 'bootstrapper.php';
 
@@ -46,9 +47,6 @@ class KWP_Plugin {
 		// Meta key for route.
 		define('KWP_ROUTE', '_kwp_route');
 
-		// Meta key for output placement.
-		define('KWP_PLACEMENT', '_kwp_placement');
-
 		// Translation domain
 		define('KWP_DOMAIN', 'kwp_domain');
 
@@ -80,15 +78,7 @@ class KWP_Plugin {
 		self::add_new_option('kwp_front_loader', $kohana_front_loader);
 		self::add_new_option('kwp_default_placement', 'replace');
 		self::add_new_option('kwp_process_all_uri', 1);
-		self::add_new_option('kwp_system_path', WP_CONTENT_DIR . '/kohana/framework/current/system/');
-		self::add_new_option('kwp_module_path', WP_CONTENT_DIR . '/kohana/modules/');
-		self::add_new_option('kwp_application_path', WP_CONTENT_DIR . '/kohana/sites/all/');
-		self::add_new_option('kwp_bootstrap_path', '');
-		self::add_new_option('kwp_ext', '.php');
 		self::add_new_option('kwp_modules', '');
-		self::add_new_option('kwp_default_controller', 'welcome');
-		self::add_new_option('kwp_default_action', 'index');
-		self::add_new_option('kwp_default_id', '');
 		self::add_new_option('kwp_front_loader_in_nav', 0);
 		self::add_new_option('kwp_page_template', '');
 	}
@@ -113,16 +103,8 @@ class KWP_Plugin {
 		//		 A better idea is to ask the user if found settings should be used when the plugin is re-activated.
 		delete_option('kwp_default_placement');
 		delete_option('kwp_process_all_uri');
-		delete_option('kwp_system_path');
-		delete_option('kwp_modules_path');
-		delete_option('kwp_application_path');
-		delete_option('kwp_bootstrap_path');
-		delete_option('kwp_ext');
 		delete_option('kwp_front_loader_in_nav');
 		delete_option('kwp_modules');
-		delete_option('kwp_default_controller');
-		delete_option('kwp_default_action');
-		delete_option('kwp_default_id');
 		delete_option('kwp_page_template');
 	}
 
@@ -144,19 +126,16 @@ class KWP_Plugin {
 	 */
 	function run() {
 		if (KWP_IN_ADMIN) {
-			// admin has known fixed system and applciation, so boot early to take advantage of autoload
-			// this loads basic Kohana system
+			// admin has known fixed system/ and application/ directory, so boot early to take 
+			// advantage of autoload features. the route is not executed
 			KWP_Bootstrapper::boot('kohana-wp/controlpanel/load_only');
 
 			register_deactivation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::deactivate');
 			register_activation_hook('kohana-wp/kohana-wp.php', 'KWP_Plugin::activate');
-			$admin = new KWP_Admin();
-			$admin->register_hooks();
+			KWP_Registrar::register_admin_hooks();
 		}
 		else {
-			include_once 'nonadmin/hooker.php';
-			$non_admin = new KWP_NonAdmin_Hooker();
-			$non_admin->register_hooks();
+			KWP_Registrar::register_content_hooks();
 		}
 	}
 }

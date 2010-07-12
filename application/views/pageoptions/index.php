@@ -12,9 +12,14 @@ class Views_PageOptions_Index {
 	function __construct() {
 		global $post;
 		$this->route_label = __("Exec Route", KWP_DOMAIN);
-		$this->route = get_post_meta($post->ID, KWP_ROUTE, true) or '';
+		$route = get_post_meta($post->ID, KWP_ROUTE, true);
+		if (!empty($route)) {
+			list($p_route, $p_placement) = explode('||', $route, 2);
+			$this->route = $p_route;
+			$this->placement = $p_placement or 'replace';
+		}
+
 		$this->output_label = __("Result Placement", KWP_DOMAIN);
-		$this->placement = get_post_meta($post->ID, KWP_PLACEMENT, true) or '';
 		if ($this->placement == '')
 			$this->placement = get_option('kwp_default_placement') or 'replace';
 	}

@@ -46,11 +46,9 @@ class Controller_PageOptions {
 		// Add hidden metadata (underscore)
 		if (empty($_POST['kwp']['route'])) {
 			delete_post_meta($page_id, KWP_ROUTE);
-			delete_post_meta($page_id, KWP_ROUTE);
 		}
 		else {
-			self::add_update_post_meta($page_id, KWP_ROUTE, $_POST['kwp']['route']);
-			self::add_update_post_meta($page_id, KWP_PLACEMENT, $_POST['kwp']['placement']);
+			self::add_update_post_meta($page_id, KWP_ROUTE, $_POST['kwp']['route'] . "||" . $_POST['kwp']['placement']);
 		}
 
 		return true;

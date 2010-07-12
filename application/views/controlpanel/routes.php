@@ -24,6 +24,7 @@ class Views_ControlPanel_Routes {
 			INNER JOIN wp_posts ON pm.post_id = wp_posts.ID
 			WHERE
 				pm.meta_key = '_kwp_route'
+			ORDER BY route;
 SQL;
 		global $wpdb;
 		$rows = $wpdb->get_results($sql);
@@ -34,6 +35,8 @@ SQL;
 			$link = ob_get_contents();
 			ob_end_clean();
 			$item->edit_link = $link;
+			list($p_route, $p_placement) = explode('||', $item->route);
+			$item->route = $p_route;
 		}
 		
 		return $rows;
