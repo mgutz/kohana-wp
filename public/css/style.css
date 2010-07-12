@@ -1,0 +1,39 @@
+#navmenu {
+    padding: 4px 0 4px 0;
+    border-bottom: solid thin #CCCCCC;
+}
+
+#navmenu ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    list-style-image: none;
+}
+
+#navmenu li {
+    margin: 4px;
+    display: inline;
+    border-top: solid thin #CCCCCC;
+    border-left: solid thin #CCCCCC;
+    border-right: solid thin #CCCCCC;
+    padding: 5px 0 5px 0;
+
+}
+
+#navmenu ul li a {
+    text-decoration: none;
+    margin: 0px;
+    padding: 5px 25px 5px 25px;
+    background: #EEEEEE;
+}
+
+#navmenu ul li a:hover {
+    background: #FFFFFF;
+}
+
+#navmenu .active {
+    text-decoration: none;
+    margin: 0;
+    padding: 5px 25px 5px 25px;
+    background: #FFFFFF;
+}

@@ -1,12 +1,16 @@
-Options +FollowSymlinks
-RewriteEngine on
+# BEGIN Kohana-WP
+<IfModule mod_rewrite.c>
+    ###### Rewrites static assets so Apache can serve the files directly.
+    RewriteEngine on
 
-#### Rewrites static assets so Apache can serve the files directly.
+    ### admin public assets
+    RewriteCond %{QUERY_STRING} kr=kohana-wp/public/(.*)$
+    RewriteRule ^.*$ wp-content/plugins/kohana-wp/public/%1? [L]
 
-RewriteCond %{REQUEST_FILENAME}!-f
-
-# must have 'kr' variable and /public/. capture the application as %1 and the rest of the URL as %2
-RewriteCond %{QUERY_STRING} kr=([^/]+)/public/(.*)$
-
-# rewrite it to wp-content, the ? at end strips the querystring so rewrite is not recursive on internal redirect
-RewriteRule ^.*$ wp-content/kohana/sites/all/%1/public/%2? [L]
+    ### application public assets
+    # must have 'kr' variable and /public/. capture the application as %1 and the rest of the URL as %2
+    RewriteCond %{QUERY_STRING} kr=([^/]+)/public/(.*)$
+    # rewrite it to wp-content, the ? at end strips the querystring so rewrite is not recursive on internal redirect
+    RewriteRule ^.*$ wp-content/kohana/sites/all/%1/public/%2? [L]
+</IfModule>
+# END Kohana-WP
