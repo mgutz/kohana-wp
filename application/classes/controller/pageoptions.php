@@ -5,14 +5,12 @@
  * Page options controller. Not a normal controller. WP manages the Page settings.
  */
 class Controller_PageOptions {
-
 	/**
 	 * Renders the Kohana-WP Integration options box in admin | Edit Page.
 	 */
 	static function index() {
 		echo View_Mustache::mustache_auto_class('pageoptions/index', null);
 	}
-
 
 	/**
 	 * Save data entered in options box.

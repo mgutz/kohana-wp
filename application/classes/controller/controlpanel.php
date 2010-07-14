@@ -1,7 +1,6 @@
 <?php
 
 
-
 class Controller_ControlPanel extends Controller {
 
 	function action_index() {

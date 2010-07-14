@@ -22,14 +22,23 @@ final class KWP_Bootstrapper {
 		list($app, $controller) = explode('/', $route, 2);
 
 		$strapper = new KWP_Bootstrapper();
-		$app_root = $strapper->route_specific_constants($route);
+		$docroot = $strapper->route_specific_constants($route);
 
 		// no need to reload if using the same app
 		if ($last_app == $app)
 			return;
 		$last_app = $app;
 
-		$strapper->load_kohana($app_root);
+		// use Kohana-WP's default system if application does not provide it
+		if (is_file($docroot.'/system/classes/kohana/core.php')) {
+			$system = 'system';
+		}
+		else {
+			$system = KWP_DOCROOT.'system';
+		}
+
+		$strapper->index($docroot, 'application', 'modules', $system);
+		$strapper->bootstrap();
 	}
 
 
@@ -60,19 +69,7 @@ final class KWP_Bootstrapper {
 		return $app_root;
 	}
 
-	private function load_kohana($docroot) {
-		// use Kohana-WP's default system if application does not provide it
-		if (is_file($docroot.'/system/classes/kohana/core.php')) {
-			$system = 'system';
-		}
-		else {
-			$system = KWP_DOCROOT.'system';
-		}
-
-		$this->index($docroot, 'application', 'modules', $system);
-		$this->bootstrap();
-	}
-
+	 
 	/**
 	 * recreate Kohana 3.0 index.php file with some modifications
 	 */
