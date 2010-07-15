@@ -9,7 +9,7 @@ class Controller_PageOptions {
 	 * Renders the Kohana-WP Integration options box in admin | Edit Page.
 	 */
 	static function index() {
-		echo View_Mustache::mustache_auto_class('pageoptions/index', null);
+		echo View_Mustache::mustache('pageoptions/index');
 	}
 
 	/**
@@ -59,6 +59,3 @@ class Controller_PageOptions {
 		add_post_meta($post_id, $key, $value, true) or update_post_meta($post_id, $key, $value);
 	}
 }
-
-
-?>

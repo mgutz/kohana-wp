@@ -1,22 +1,27 @@
 <?php
 
+if (!current_user_can('manage_options')) {
+	wp_die( __('You do not have sufficient permissions to access this page.') );
+}
+
+
 
 class Controller_ControlPanel extends Controller {
 
 	function action_index() {
 		$this->model = Model_GeneralSettings::obj()->first();
-	    $this->render(array('controlpanel/general', 'layout/controlpanel'));
+	    $this->render('controlpanel/general');
 	}
 	
 	function action_routes() {
-	    $this->render(array('controlpanel/routes', 'layout/controlpanel'));
+	    $this->render('controlpanel/routes');
 	}
 	
 
 	function action_update_general() {
 		$this->model = Model_GeneralSettings::obj()->create($_POST)->save();
 		$this->add_flash_notice("Setings saved.");
-		$this->render(array('controlpanel/general', 'layout/controlpanel'));
+		$this->render('controlpanel/general');
 	}
 
 	function action_delete_route() {

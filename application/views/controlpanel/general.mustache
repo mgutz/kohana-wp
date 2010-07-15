@@ -1,3 +1,6 @@
+{{< layout/controlpanel}}
+
+{{$content}}
 <div id="kohana_options_tab">
     <h3>Kohana Options</h3>
 
@@ -7,7 +10,7 @@
     </div>
 
     <div class="form-wrap">
-        <form name="addmap" id="addmap" method="post" action="{{controller_url}}/update_general">
+        <form name="addmap" id="addmap" method="post" action="{{&controller_url}}/update_general">
             {{& nonce_field}}
 
             <div class="form-field form-required">
@@ -25,7 +28,7 @@
                 <label for="kwp_page_template"><strong>Kohana Page Template</strong></label>
                 <select name="kwp_page_template" id="kwp_page_template">
                     <option value='default'>Default Template</option>
-                    {{& page_template_options}}
+                    {{&page_template_options}}
                 </select>
 
                 <p> 
@@ -49,9 +52,9 @@
             <label for="name"><strong>Process all URIs</strong></label>
             <input type="checkbox" name="kwp_process_all_uri" value="1"  {{process_all_uri_checked}}  />
             <p>If you turn this setting off then the plugin will only attempt to process Kohana controllers if requested
-                from front loader page. If you turn this setting on
-                then the plugin will check for a valid Kohana controller for every request that isn't for a specific
-                wordpress page or post.</p>
+                from front loader page. If you turn this setting on then the plugin will check for a valid Kohana
+                controller for every request that isn't for a specific wordpress page or post.
+            </p>
             </div>
 
             <p class="submit"><input class="button" name="submit" value="Update Kohana-WP General Settings" type="submit"></p>
@@ -60,3 +63,4 @@
     </div>
     <br class="clear"/>
 </div>
+{{/content}}

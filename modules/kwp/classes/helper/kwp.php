@@ -44,4 +44,3 @@ class Helper_KWP {
  		return $result;
 	}
 }
-?>

@@ -33,7 +33,8 @@ class Controller_KWP extends Kohana_Controller {
 	 * @param array $locals Local variables.
 	 * @return string
 	 */
-	function render_text($template_paths, $locals = NULL) {
+	function render_text($template_path, $locals = NULL) {
+		// pass instance variables along with locals
 		foreach (array($this, $locals) as $arr) {
 			if (empty($arr)) continue;
 			
@@ -43,9 +44,8 @@ class Controller_KWP extends Kohana_Controller {
 				}
 			}
 		}
-		return (string) View::factory($template_paths, $context);
+		return (string) View::factory($template_path, $context);
 	}
-	
 
 //	/**
 //	 * TODO: Adding a layout likes this breaks how Kohana works with views. The rendering pipeline

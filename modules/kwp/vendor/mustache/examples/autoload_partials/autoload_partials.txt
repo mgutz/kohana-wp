@@ -1,0 +1,6 @@
+# Allies #####
+ * Donkey Kong
+ * Luigi
+ * Mario
+ * Peach
+ * Yoshi

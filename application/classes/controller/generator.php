@@ -8,7 +8,7 @@
 
 class Controller_Generator extends Controller {
 	function action_index() {
-		$this->render(array('controlpanel/generator', 'layout/controlpanel'));
+		$this->render('controlpanel/generator');
 	}
 
 	function action_generate_app() {

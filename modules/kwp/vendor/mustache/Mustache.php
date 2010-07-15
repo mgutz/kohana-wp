@@ -1,5 +1,7 @@
 <?php
 
+define('AUTO_INSTANTIATE_VIEW_CLASS', true);
+
 /**
  * A Mustache implementation in PHP.
  *
@@ -33,7 +35,45 @@ class Mustache {
 	// Override charset passed to htmlentities() and htmlspecialchars(). Defaults to UTF-8.
 	protected $_charset = 'UTF-8';
 
-	const PRAGMA_DOT_NOTATION = 'DOT-NOTATION';
+	/**
+	 * Pragmas are macro-like directives that, when invoked, change the behavior or
+	 * syntax of Mustache.
+	 *
+	 * They should be considered extremely experimental. Most likely their implementation
+	 * will change in the future.
+	 */
+
+	/**
+	 * The {{%DOT-NOTATION}} pragma allows context traversal via dots. Given the following context:
+	 *
+	 *     $context = array('foo' => array('bar' => array('baz' => 'qux')));
+	 *
+	 * One could access nested properties using dot notation:
+	 *
+	 *      {{%DOT-NOTATION}}{{foo.bar.baz}}
+	 *
+	 * Which would render as `qux`.
+	 */
+	const PRAGMA_DOT_NOTATION      = 'DOT-NOTATION';
+
+	/**
+	 * The {{%IMPLICIT-ITERATOR}} pragma allows access to non-associative array data in an
+	 * iterable section:
+	 *
+	 *     $context = array('items' => array('foo', 'bar', 'baz'));
+	 *
+	 * With this template:
+	 *
+	 *     {{%IMPLICIT-ITERATOR}}{{#items}}{{.}}{{/items}}
+	 *
+	 * Would render as `foobarbaz`.
+	 *
+	 * {{%IMPLICIT-ITERATOR}} accepts an optional 'iterator' argument which allows implicit
+	 * iterator tags other than {{.}} ...
+	 *
+	 *     {{%IMPLICIT-ITERATOR iterator=i}}{{#items}}{{i}}{{/items}}
+	 */
+	const PRAGMA_IMPLICIT_ITERATOR = 'IMPLICIT-ITERATOR';
 
 	/**
 	 * The {{%UNESCAPED}} pragma swaps the meaning of the {{normal}} and {{{unescaped}}}
@@ -53,9 +93,11 @@ class Mustache {
 	protected $_context  = array();
 	protected $_partials = array();
 	protected $_pragmas  = array();
+	protected $_captures = array();
 
 	protected $_pragmasImplemented = array(
 		self::PRAGMA_DOT_NOTATION,
+		self::PRAGMA_IMPLICIT_ITERATOR,
 		self::PRAGMA_UNESCAPED
 	);
 
@@ -213,6 +255,9 @@ class Mustache {
 	 * @return string Rendered Mustache template.
 	 */
 	public function render($template = null, $view = null, $partials = null) {
+		if (defined('AUTO_INSTANTIATE_VIEW_CLASS') && $view == null) {
+			$view = $this->_new_code_behind_class($template);
+		}
 
 		// Autoload template if none is explicitly set.
 		if ($template === null) {
@@ -226,12 +271,27 @@ class Mustache {
 
 		if ($view) {
 			$this->_context = array($view);
-		} else if (empty($this->_context)) {
+		}
+		else if (empty($this->_context)) {
 			$this->_context = array($this);
 		}
 
 		$template = $this->_renderPragmas($template);
-		return $this->_renderTemplate($template, $this->_context);
+		$content = $this->_renderTemplate($template, $this->_context);
+
+
+		foreach ($this->_captures as $key => $captured_content)
+			$view->$key = $captured_content;
+
+		// TODO: _push_parent_template
+		// render the parent
+		if (isset($this->parent_template)) {
+			$parent_template = $this->parent_template;
+			unset($this->parent_template);
+			$content = $this->_renderPartial($parent_template);
+		}
+
+		return $content;
 	}
 
 	/**
@@ -273,7 +333,7 @@ class Mustache {
 	protected function _renderSection($template) {
 		$otag  = preg_quote($this->_otag, '/');
 		$ctag  = preg_quote($this->_ctag, '/');
-		$regex = '/' . $otag . '(\\^|\\#)\\s*(.+?)\\s*' . $ctag . '\\s*([\\s\\S]+?)' . $otag . '\\/\\s*\\2\\s*' . $ctag . '\\s*/m';
+		$regex = '/' . $otag . '(\\^|\\#|\\$)\\s*(.+?)\\s*' . $ctag . '\\s*([\\s\\S]+?)' . $otag . '\\/\\s*\\2\\s*' . $ctag . '\\s*/m';
 
 		$matches = array();
 		while (preg_match($regex, $template, $matches, PREG_OFFSET_CAPTURE)) {
@@ -284,7 +344,8 @@ class Mustache {
 			$content  = $matches[3][0];
 
 			$replace = '';
-			$val = $this->_getVariable($tag_name);
+			if ($type != '$')
+				$val = $this->_getVariable($tag_name);
 			switch($type) {
 				// inverted section
 				case '^':
@@ -293,11 +354,32 @@ class Mustache {
 					}
 					break;
 
+				// capture section
+				case '$':
+					$this->_captures[$tag_name] = $this->_renderTemplate($content);
+					break;
+
 				// regular section
 				case '#':
 					if ($this->_varIsIterable($val)) {
+						if ($this->_hasPragma(self::PRAGMA_IMPLICIT_ITERATOR)) {
+							if ($opt = $this->_getPragmaOptions(self::PRAGMA_IMPLICIT_ITERATOR)) {
+								$iterator = $opt['iterator'];
+							} else {
+								$iterator = '.';
+							}
+						} else {
+							$iterator = false;
+						}
+
 						foreach ($val as $local_context) {
-							$this->_pushContext($local_context);
+
+							if ($iterator) {
+								$iterator_context = array($iterator => $local_context);
+								$this->_pushContext($iterator_context);
+							} else {
+								$this->_pushContext($local_context);
+							}
 							$replace .= $this->_renderTemplate($content);
 							$this->_popContext();
 						}
@@ -398,11 +480,11 @@ class Mustache {
 	 * @throws MustacheException Unknown pragma
 	 */
 	protected function _getPragmaOptions($pragma_name) {
-		if (!$this->_hasPragma()) {
+		if (!$this->_hasPragma($pragma_name)) {
 			throw new MustacheException('Unknown pragma: ' . $pragma_name, MustacheException::UNKNOWN_PRAGMA);
 		}
 
-		return $this->_localPragmas[$pragma_name];
+		return (is_array($this->_localPragmas[$pragma_name])) ? $this->_localPragmas[$pragma_name] : array();
 	}
 
 
@@ -437,7 +519,7 @@ class Mustache {
 		$otag = preg_quote($this->_otag, '/');
 		$ctag = preg_quote($this->_ctag, '/');
 
-		$this->_tagRegEx = '/' . $otag . "([#\^\/=!>\\{&])?(.+?)\\1?" . $ctag . "+/";
+		$this->_tagRegEx = '/' . $otag . "([#\^\/=!>\\{&\<])?(.+?)\\1?" . $ctag . "+/";
 
 		$html = '';
 		$matches = array();
@@ -504,6 +586,10 @@ class Mustache {
 					return $this->_renderUnescaped($tag_name);
 				}
 				break;
+			case '<':
+				$this->parent_template = $tag_name;
+				return '';
+				break;
 			case '':
 			default:
 				if ($this->_hasPragma(self::PRAGMA_UNESCAPED)) {
@@ -557,7 +643,22 @@ class Mustache {
 	 */
 	protected function _renderPartial($tag_name) {
 		$view = clone($this);
-		return $view->render($this->_getPartial($tag_name));
+		if (defined('AUTO_INSTANTIATE_VIEW_CLASS')) {
+			$template_class = $this->_new_code_behind_class($tag_name);
+
+			// add current context to template class, since the template class becomes the context
+			$context = $view->_context[count($view->_context) - 1];
+			foreach ($context as $key => $value) {
+				$template_class->$key = $value;
+			}
+
+			$content = $view->render($this->_getPartial($tag_name), $template_class);
+		}
+		else {
+			$content = $view->render($this->_getPartial($tag_name));
+		}
+		
+		return $content;
 	}
 
 	/**
@@ -628,7 +729,7 @@ class Mustache {
 	 * @return string
 	 */
 	protected function _getVariable($tag_name) {
-		if ($this->_hasPragma(self::PRAGMA_DOT_NOTATION)) {
+		if ($this->_hasPragma(self::PRAGMA_DOT_NOTATION) && $tag_name != '.') {
 			$chunks = explode('.', $tag_name);
 			$first = array_shift($chunks);
 
@@ -713,7 +814,29 @@ class Mustache {
 	 * @return bool
 	 */
 	protected function _varIsIterable($var) {
-		return is_object($var) || (is_array($var) && !array_diff_key($var, array_keys(array_keys($var))));
+		return $var instanceof Traversable || (is_array($var) && !array_diff_key($var, array_keys(array_keys($var))));
+	}
+
+
+	/**
+	 * Creates the code-behind class for a template. If a corresponding class is not found, then
+	 * a standard class is used.
+	 *
+	 * @param  string $template_path Path to template relative to classes/view/.
+	 * @return stdClass or template-specific class
+	 */
+	private function _new_code_behind_class($template_path) {
+		$class_file = $this->_templateBase . $template_path . '.php';
+		if (is_file($class_file)) {
+			require $class_file;
+
+			$contents = file_get_contents($class_file);
+			preg_match('/^\\s*class\\s+([^\\s]+)/m', $contents, $matches);
+			$class_name = $matches[1];
+			return new $class_name();
+		}
+
+		return null;
 	}
 }
 
