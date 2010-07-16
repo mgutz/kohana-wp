@@ -121,7 +121,7 @@ class KWP_Request {
 		// TODO: should invalid routes be allowed to go through?
 		error_log("Controller does not exist for route: $controller_path");
 
-		// TODO: application defined routes are not known yet.
+		// TODO: application defined routes are are uknnown as applications are not loaded until the route is known.
 		//       May need init script which allows apps to register routs with the sytem. e
 //		if ($kr) {
 //			$defined_routes = Route::all();
@@ -193,8 +193,6 @@ class KWP_Request {
 	}
 
 
-
-
 	/**
 	 * Calculates the doc root of a Kohana application. DOCROOT refers to the parent directory of application/, modules/
 	 * and system/ by convention.
@@ -206,6 +204,7 @@ class KWP_Request {
 	private static function doc_root($app_name) {
 		return KOHANA_APPS_ROOT."$app_name/";
 	}
+    
 
 	/**
 	 * Function returns true if the current request is for the wordpress homepage.
@@ -219,5 +218,4 @@ class KWP_Request {
 		}
 		return ($full_uri == get_option('home')) ? true : false;
 	}
-
 }

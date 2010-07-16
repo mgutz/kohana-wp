@@ -46,16 +46,9 @@ class Controller_PageOptions {
 			delete_post_meta($page_id, KWP_ROUTE);
 		}
 		else {
-			self::add_update_post_meta($page_id, KWP_ROUTE, $_POST['kwp']['route'] . "||" . $_POST['kwp']['placement']);
+			Helper_KWP::add_update_post_meta($page_id, KWP_ROUTE, $_POST['kwp']['route'] . "||" . $_POST['kwp']['placement']);
 		}
 
 		return true;
-	}
-
-	/**
-	 * Adds or updates a post meta data.
-	 */
-	static function add_update_post_meta($post_id, $key, $value) {
-		add_post_meta($post_id, $key, $value, true) or update_post_meta($post_id, $key, $value);
 	}
 }

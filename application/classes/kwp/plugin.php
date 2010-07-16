@@ -38,7 +38,7 @@ class KWP_Plugin {
 	function __construct() {
 		define('KWP_IN_ADMIN', strpos($_SERVER['REQUEST_URI'], 'wp-admin/') !== false);
 
-		// Directory containing MVC framework, modules and site applications. (not the plugin root)
+		// Applications directory contains many applications (parent of multiple DOCROOT)
 		if (KWP_IN_ADMIN)
 			define('KOHANA_APPS_ROOT', WP_PLUGIN_DIR.'/');
 		else
