@@ -16,9 +16,17 @@ class Controller_Generator extends Controller_ControlPanel {
 	function action_generate_app() {
         $this->app = $_POST['app'];
         $app = $this->app['name'];
+        $title = $this->app['test_page'];
+        if (empty($title)) {
+            $title = "$app Test";
+        }
         
-        // TODO: use an option for this later
+        // TODO: add this as an option for the plugin settings
         define('KWP_USER_APPS_ROOT', WP_CONTENT_DIR . '/kohana/sites/all/');
+        if (!is_dir(KWP_USER_APPS_ROOT)) {
+            Helper_KWP::mkdir_p(KWP_USER_APPS_ROOT);
+        }
+
         
         $docroot = realpath(KWP_USER_APPS_ROOT . $app);
 		// verify path does not already exist
