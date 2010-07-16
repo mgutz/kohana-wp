@@ -1,0 +1,24 @@
+{{< layout/multistep}}
+
+{{$content}}
+
+<h2>Step 1 - Create Your Pizza</h2>
+<form name='order' action="{{&controller_url}}/summary" method="POST">
+    <p>
+        <label>Item 1</label><br />
+        <input name='order[items][]' style="width:100%" />
+    </p>
+    <p>
+        <label>Item 2</label><br />
+        <input name='order[items][]' style="width:100%" />
+    </p>
+    <p>
+        <label>Special Instructions</label><br />
+        <textarea name='order[instructions]' rows="8" style="width:100%"></textarea>
+    </p>
+    <p>
+        <input type="submit" value="Next" />
+    </p>
+</form>
+
+{{/content}}

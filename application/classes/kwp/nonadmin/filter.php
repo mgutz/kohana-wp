@@ -68,14 +68,14 @@ class KWP_NonAdmin_Filter {
 			}
 		}
 
-		$exec = "kohana";
+		$exec = "kohana_exec ";
 		// Look for any Kohana requests that are dropped directly into the content
-		$tag = "/\\[$exec (.*?)\\]/";
+		$tag = "/\\[$exec(.*?)\\]/i";
 		$matches = array();
 		if (preg_match_all($tag, $content, $matches)) {
 			foreach ($matches[1] as $i => $match) {
-				$output =  KWP_Request::execute_route(trim($match));
-				$content = str_replace("[$exec " . trim($match) . ']', $output, $content);
+				$output = kohana(trim($match));
+				$content = str_replace("[$exec" . $match . ']', $output, $content);
 			}
 		}
 

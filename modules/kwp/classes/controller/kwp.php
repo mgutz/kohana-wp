@@ -18,22 +18,33 @@ class Controller_KWP extends Kohana_Controller {
 	 * as the template, the class will be instantiated. If not, the template
 	 * will be used directly.
 	 *
-	 * @param string $template_path The path of the template relative to classes/view.
+	 * @param string $template_path The path of the template relative to classes/view/.
+	 * 								If the template is null, then the template name
+	 *                              is derived from the current controller/action
+	 *                              path.
 	 * @param array $locals Local variables.
 	 * @return void
 	 */
-	function render($template_path, $locals = NULL) {
+	function render($template_path = null, $locals = null) {
 		$this->request->response = $this->render_text($template_path, $locals);
 	}
 
 	/**
 	 * Renders a Mustache template as a string.
 	 *
-	 * @param string $template_path The path of the template relative to classes/view.
+	 * @param string $template_path The path of the template relative to classes/view/.
+	 * 								If the template is null, then the template name
+	 *                              is derived from the current controller/action
+	 *                              path.
 	 * @param array $locals Local variables.
 	 * @return string
 	 */
-	function render_text($template_path, $locals = NULL) {
+	function render_text($template_path = null, $locals = null) {
+		if (empty($template_path)) {
+			$template_path = strtolower(KWP_Plugin::globals('current_controller') . '/'
+					. KWP_Plugin::globals('current_action'));
+		}
+		
 		// pass instance variables along with locals
 		foreach (array($this, $locals) as $arr) {
 			if (empty($arr)) continue;
@@ -44,7 +55,8 @@ class Controller_KWP extends Kohana_Controller {
 				}
 			}
 		}
-		return (string) View::factory($template_path, $context);
+		$result = (string) View::factory($template_path, $context);
+		return $result;
 	}
 
 //	/**
