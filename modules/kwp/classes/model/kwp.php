@@ -8,7 +8,7 @@
  */
 
 abstract class Model_KWP {
-	abstract static function obj();
+	abstract static function factory();
 }
 
 

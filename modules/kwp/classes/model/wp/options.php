@@ -27,12 +27,6 @@ abstract class Model_WP_Options extends Model_KWP {
 		return $this;
 	}
 
-	private static function factory() {
-		$class = get_called_class();
-		$model = new $class();
-		return $model;
-	}
-
 	function first() {
 		foreach ($this as $key => $value) {
 			$this->$key = get_option($key);

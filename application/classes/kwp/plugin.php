@@ -81,6 +81,14 @@ class KWP_Plugin {
 		self::add_new_option('kwp_modules', '');
 		self::add_new_option('kwp_front_loader_in_nav', 0);
 		self::add_new_option('kwp_page_template', '');
+		
+		// The directory in which generated and downloaded applications are installed.
+		$apps_root = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'kohana' . DIRECTORY_SEPARATOR . 'sites' . DIRECTORY_SEPARATOR . 'all';
+		if (!is_dir($apps_root)) {
+			KWP::mkdir_p($apps_root);
+		}
+
+		self::add_new_option('kwp_applications_root', $apps_root);
 	}
 
 	/**
@@ -97,7 +105,6 @@ class KWP_Plugin {
 		wp_delete_post(get_option('kwp_front_loader'));
 		delete_option('kwp_front_loader');
 
-		return;
 
 		// TODO: if someone accidentally deactivates the plugin, all routes and plugin info is lost!
 		//		 A better idea is to ask the user if found settings should be used when the plugin is re-activated.
@@ -106,6 +113,8 @@ class KWP_Plugin {
 		delete_option('kwp_front_loader_in_nav');
 		delete_option('kwp_modules');
 		delete_option('kwp_page_template');
+		delete_option('kwp_applications_root');
+		return;
 	}
 
 	static function add_update_option($key, $value) {

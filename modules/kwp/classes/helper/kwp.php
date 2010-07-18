@@ -190,4 +190,12 @@ class Helper_KWP {
 
  		return $result;
 	}
+
+	static function slash($path) {
+		$ch = substr($path, -1);
+		if ($ch != '\\' &&  $ch != '/')
+			return $path . DIRECTORY_SEPARATOR;
+		else
+			return $path;
+	}
 }

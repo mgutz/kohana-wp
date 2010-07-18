@@ -11,10 +11,10 @@ class Views_ControlPanel_General {
 		 global $wpdb;
 
 		 if (!get_option('permalink_structure')) {
-			 $my_kohana_front .= '/?page_id=' . get_option('kwp_front_loader');
+			 $my_kohana_front .= '/?page_id=' . $this->settings->kwp_front_loader;
 		 }
 		else {
-			 $my_kohana_front .= '/' . $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID = " . get_option('kwp_front_loader') );
+			 $my_kohana_front .= '/' . $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID = " . $this->settings->kwp_front_loader);
 		 }
 		
 		return $my_kohana_front;
@@ -29,7 +29,7 @@ class Views_ControlPanel_General {
 	}
 
 	function result_placement_dropdown() {
-		$current = get_option('kwp_default_placement');
+		$current = $this->settings->kwp_default_placement;
 		if (empty($current)) $current = 'replace';
 
 		return Form::select('kwp_default_placement',
@@ -44,18 +44,18 @@ class Views_ControlPanel_General {
 
 	function page_template_options() {
 		ob_start();
-		page_template_dropdown($this->model->kwp_page_template);
+		page_template_dropdown($this->settings->kwp_page_template);
 		$result = ob_get_contents();
 		ob_end_clean();
 		return $result;
 	}
 
 	function process_all_uri_checked() {
-		return ($this->model->kwp_process_all_uri) ? 'checked="true"' : '';
+		return ($this->settings->kwp_process_all_uri) ? 'checked="true"' : '';
 	}
 
 	function front_loader_in_nav_checked() {
-		return ($this->model->kwp_front_loader_in_nav) ? 'checked="true"' : '';
+		return ($this->settings->kwp_front_loader_in_nav) ? 'checked="true"' : '';
 	}
 
 	function edit_front_loader_url() {

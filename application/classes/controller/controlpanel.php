@@ -5,27 +5,57 @@ if (!current_user_can('manage_options')) {
 }
 
 
-
 class Controller_ControlPanel extends Controller {
 
 	function action_index() {
-		$this->model = Model_GeneralSettings::obj()->first();
+		$this->retrieve_settings();
+
+		$app_root = $this->settings->kwp_applications_root;
+		$controller_url = $this->controller_url;
+		if (!realpath($app_root)) {
+			$mk_link = "<a href='$controller_url/mk_apps_root'>Make Directory!</a>";
+			$this->add_flash_notice("Applications root is not a valid directory: $app_root $mk_link", 'error');
+		}
+		
 	    $this->render('controlpanel/general');
+
+
+	}
+
+	private function retrieve_settings() {
+		$this->settings = isset($this->settings) ? $this->settings : Model_GeneralSettings::factory()->first();
 	}
 	
 	function action_routes() {
 	    $this->render('controlpanel/routes');
 	}
+
+	function action_mk_apps_root() {
+		$this->retrieve_settings();
+		$this->mk_apps_root();
+		$this->render('controlpanel/general');
+	}
 	
 
+	private function mk_apps_root() {
+		// create applications root
+		try {
+			KWP::mkdir_p($this->settings->kwp_applications_root);
+			$this->add_flash_notice("Setings saved.");
+		}
+		catch(Exception $e) {
+			$this->add_flash_notice($e->getMessage());
+		}
+	}
+
 	function action_update_general() {
-		$this->model = Model_GeneralSettings::obj()->create($_POST)->save();
-		$this->add_flash_notice("Setings saved.");
+		$this->settings = Model_GeneralSettings::factory()->create($_POST)->save();
 		$this->render('controlpanel/general');
 	}
 
 	function action_delete_route() {
 		$this->delete_route($_POST['route_post_id']);
+
 		$this->add_flash_notice("Route deleted");
 		$this->action_routes();
 	}
